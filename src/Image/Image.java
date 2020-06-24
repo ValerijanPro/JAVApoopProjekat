@@ -12,6 +12,8 @@ public class Image {
 	ArrayList<Integer> akt;
 	boolean medijana;
 	
+	char opacity;
+	
 	public Image(int s , int v , int bbpp  ) {
 		sirina = s;
 		visina = v;
@@ -28,6 +30,9 @@ public class Image {
 		visina=0;
 		brlejera=0;
 		brbitapopixelu=32;
+		
+	}
+	public void setOpacity() {
 		
 	}
 	public boolean getMedijana() { return medijana; }
@@ -134,7 +139,7 @@ public class Image {
 			l.realocirajPovecaj(l.getSirina(), visina);
 		}
 		//insert na poziciju
-		if (layers.containsKey(pozicija)) {
+		if (!layers.containsKey(pozicija)) {
 			layers.put(pozicija, l) ;
 			sirina = l.getSirina();
 			visina = l.getvisina();

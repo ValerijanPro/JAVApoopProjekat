@@ -12,12 +12,16 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	GUIImage gimage;
 	String putanja;
 	private Dijalog dijalog;
+	//TODO: TEMP JE SAMO DOK NE STAVIM FILECHOOSER, PA CU BROJ GDE UPISUJEM LAYER DRUGACIJE SLATI
+	int temp=0;
+	
 	
 	Panel lejeri;
 	Panel selekcije;
 	
 	class Dijalog extends Dialog implements ActionListener{
 		TextField poljeZaTekst=new TextField("Uneti tekst ovde.");
+		
 		GUI cale;
 		Dijalog(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
@@ -31,11 +35,13 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 		private void dodajKomponente() {
 			// TODO Auto-generated method stub
-			setLayout(new GridLayout(2,1));
+			setLayout(new GridLayout(3,1));
 			Label labela=new Label("Ime slike sa ekstenzijom: ");
 			add(labela);
 			add(poljeZaTekst);
+			
 			poljeZaTekst.addActionListener(this);
+			
 		}
 
 		@Override
@@ -84,7 +90,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 	private void dodajSliku() {
 		// TODO Auto-generated method stub
-		gimage.setPutanja(putanja);
+		gimage.setPutanja(putanja,temp++);
 		add(gimage,BorderLayout.CENTER);
 		lejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
 		lejeri.add(gimage.dodajLejer());
@@ -170,11 +176,12 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	}
 
 	public void osveziSliku() {
-		// TODO Auto-generated method stub
+		
+		remove(gimage);
 		add(gimage,BorderLayout.CENTER);
 		//lejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
 		//lejeri.add(gimage.dodajLejer());
-		revalidate();
+		//revalidate();
 	}
 	
 }
