@@ -3,10 +3,45 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*; 
 import selekcije.*;
+import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 public class GUI extends Frame implements ActionListener,ItemListener{
 //BufferedImage imageIO.read
 	ArrayList<SelekcijeGUI> trenSelekcije=new ArrayList();
-	
+	GUIImage gimage;
+	String putanja;
+	private Dijalog dijalog;
+	class Dijalog extends Dialog implements ActionListener{
+		TextField poljeZaTekst=new TextField("Uneti tekst ovde.");
+		GUI cale;
+		Dijalog(GUI roditelj) {
+			super(roditelj,"Dijalog",false);
+			cale=roditelj;
+			setSize(200,200);
+			addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {setVisible(false);} 
+			});
+			dodajKomponente();
+		}
+
+		private void dodajKomponente() {
+			// TODO Auto-generated method stub
+			setLayout(new GridLayout(2,1));
+			Label labela=new Label("Putanja do slike: ");
+			add(labela);
+			add(poljeZaTekst);
+			poljeZaTekst.addActionListener(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			String tekst=poljeZaTekst.getText();
+			cale.putanja=tekst;
+			cale.dodajSliku();
+		}
+	}
 	
 	public GUI() {
 		
@@ -18,16 +53,34 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	         }   
 	     });
 		//dodajScenu();
-		setSize(700,700);
+		
+		dijalog=new Dijalog(this);
+		setSize(9999,9999);
+		gimage=new GUIImage(this);
+		dodajMenije();
 		dodajDesniDeo();
 		dodajOperacije();
-		dodajSliku();
+		//dodajSliku();
 		setVisible(true);
 		
 	}
 
+	private void dodajMenije() {
+		// TODO Auto-generated method stub
+		MenuBar traka=new MenuBar();
+		Menu dodavanje=new Menu("Dodavanje slike");
+		dodavanje.add("Dodaj novu sliku");
+		dodavanje.addActionListener(this);
+		traka.add(dodavanje);
+		setMenuBar(traka);
+	}
+
 	private void dodajSliku() {
 		// TODO Auto-generated method stub
+		gimage.setPutanja(putanja);
+		add(gimage,BorderLayout.CENTER);
+		revalidate();
+		//gimage.paint(getGraphics());
 		
 	}
 
@@ -99,7 +152,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		String komanda=e.getActionCommand();
+		if(komanda.equals("Dodaj novu sliku")) dijalog.setVisible(true);
 	}
 	
 }
