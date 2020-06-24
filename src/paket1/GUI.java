@@ -21,12 +21,12 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	
 	class Dijalog extends Dialog implements ActionListener{
 		TextField poljeZaTekst=new TextField("Uneti tekst ovde.");
-		
+		TextField poljeZaBroj=new TextField("Pozicija na koju upisujemo layer: ");
 		GUI cale;
 		Dijalog(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
 			cale=roditelj;
-			setSize(200,200);
+			setSize(300,300);
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent we) {setVisible(false);} 
 			});
@@ -38,8 +38,9 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			setLayout(new GridLayout(3,1));
 			Label labela=new Label("Ime slike sa ekstenzijom: ");
 			add(labela);
+			add(poljeZaBroj);
 			add(poljeZaTekst);
-			
+			poljeZaBroj.addActionListener(this);
 			poljeZaTekst.addActionListener(this);
 			
 		}
@@ -48,9 +49,22 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			String tekst=poljeZaTekst.getText();
-			cale.putanja=tekst;
-			cale.dodajSliku();
-			System.out.println("test");
+			System.out.println("DESILO SE NESTO");
+			if(!tekst.equals("") && !tekst.equals("Uneti tekst ovde.")) {
+				
+				cale.putanja=tekst;
+				System.out.println("Putanja nova "+cale.putanja);
+				cale.dodajSliku();
+				//poljeZaTekst.setText("");
+				//System.out.println("test");
+			}
+			tekst=poljeZaBroj.getText();
+			if(!tekst.equals("")) {
+				cale.temp=Integer.parseInt(tekst);
+				//poljeZaBroj.setText("");
+			}
+			//System.out.println("asd");
+			
 			
 		}
 	}
@@ -90,10 +104,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 	private void dodajSliku() {
 		// TODO Auto-generated method stub
-		gimage.setPutanja(putanja,temp++);
+		gimage.setPutanja(putanja,temp);
 		add(gimage,BorderLayout.CENTER);
 		lejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
-		lejeri.add(gimage.dodajLejer());
+		lejeri.add(gimage.dodajLejer(temp));
 		revalidate();
 		
 		//gimage.paint(getGraphics());

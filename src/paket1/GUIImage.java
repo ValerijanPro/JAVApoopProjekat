@@ -42,13 +42,14 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 		
 	}
 	public void setPutanja(String s,int t ) {
+		
 		File f=null;
 		//System.out.println(s);
 		f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+s);
 		BufferedImage temp=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		images.put(t,temp);
-		Layer novi=new Layer(images.get(images.size()-1).getWidth(),images.get(images.size()-1).getHeight());
-
+		Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
+		System.out.println("NOVI w:"+novi.getSirina()+", novi h:"+novi.getvisina());
 		try {
 			
 			temp=ImageIO.read(f);
@@ -80,17 +81,17 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 		}
 		images.put(t, temp2);
 	}
-	public Panel dodajLejer() {
+	public Panel dodajLejer(int t) {
 		Panel p=new Panel();
-		p.add(new Label("Sloj "+brslojeva));
+		p.add(new Label("Sloj "+t));
 		Checkbox aktivan=new Checkbox("Aktivan",true);
 		aktivan.addItemListener(this);
-		listaBoxova.put(brslojeva-1, aktivan);
+		listaBoxova.put(t, aktivan);
 		//aktivan.addItemListener(origin);
 		p.add(aktivan);
 		TextField poljeZaTekst=new TextField("");
 		poljeZaTekst.addActionListener(this);
-		listaOpacitya.put(brslojeva-1, poljeZaTekst);
+		listaOpacitya.put(t, poljeZaTekst);
 		p.add(poljeZaTekst);
 		p.add(new Label("opacity"));
 		return p;
@@ -156,8 +157,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 	public void setOpacity(int c,String newOp) {
 		double newOpacity=Double.parseDouble(newOp);
 		BufferedImage t=images.get(c);
-		System.out.println("DOBIO SAM C:"+c);
-		System.out.println("Da li su jednake: "+t.equals(images.get(0)));
+		
 		for(int i=0;i<t.getWidth();i++) {
 			for(int j=0;j<t.getHeight();j++) {
 				char R,G,B,A;
@@ -170,7 +170,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 				A=(char)(slike.getLayers().get(c).getPixel(i, j).getOpacity()*(newOpacity/100));
 				//A=(char)(slike.getLayers().get(c).getPixel(i, j).getOpacity());
 				if(i==0 && j==0) {
-					System.out.println("ARGB: "+(int)A+","+(int)R+","+(int)G+","+(int)B);
+					
 				}
 				//int novo;
 				int novo = (A << 24) | (R << 16) | (G << 8) | B;
@@ -190,10 +190,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 		
 		for(Map.Entry<Integer, TextField> c:listaOpacitya.entrySet()) {
 			if(!c.getValue().getText().equals("")) {
-				System.out.println(c.getKey()+", "+c.getValue().getText());
+				//System.out.println(c.getKey()+", "+c.getValue().getText());
 				setOpacity(c.getKey(),c.getValue().getText());
 				//origin.osveziSliku();
 			}
+			//System.out.println("asd");
 			
 		}
 		//System.out.println(images.size());
