@@ -12,6 +12,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	GUIImage gimage;
 	String putanja;
 	private Dijalog dijalog;
+	
+	Panel lejeri;
+	Panel selekcije;
+	
 	class Dijalog extends Dialog implements ActionListener{
 		TextField poljeZaTekst=new TextField("Uneti tekst ovde.");
 		GUI cale;
@@ -28,7 +32,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		private void dodajKomponente() {
 			// TODO Auto-generated method stub
 			setLayout(new GridLayout(2,1));
-			Label labela=new Label("Putanja do slike: ");
+			Label labela=new Label("Ime slike sa ekstenzijom: ");
 			add(labela);
 			add(poljeZaTekst);
 			poljeZaTekst.addActionListener(this);
@@ -40,6 +44,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			String tekst=poljeZaTekst.getText();
 			cale.putanja=tekst;
 			cale.dodajSliku();
+			System.out.println("test");
+			
 		}
 	}
 	
@@ -55,10 +61,11 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		//dodajScenu();
 		
 		dijalog=new Dijalog(this);
-		setSize(9999,9999);
+		setSize(3000,3000);
 		gimage=new GUIImage(this);
+		
 		dodajMenije();
-		dodajDesniDeo();
+		dodajLeviDeo();
 		dodajOperacije();
 		//dodajSliku();
 		setVisible(true);
@@ -79,7 +86,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		// TODO Auto-generated method stub
 		gimage.setPutanja(putanja);
 		add(gimage,BorderLayout.CENTER);
+		lejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
+		lejeri.add(gimage.dodajLejer());
 		revalidate();
+		
 		//gimage.paint(getGraphics());
 		
 	}
@@ -96,13 +106,14 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		add(p,BorderLayout.EAST);
 	}
 	
-	private void dodajDesniDeo() {
+	private void dodajLeviDeo() {
 		ArrayList<Pravougaonik> temp=new ArrayList();
 		temp.add(new Pravougaonik(222,136,180,110));
 		trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",temp)));
 		// TODO Auto-generated method stub
 		Panel p=new Panel();
-		Panel p1=new Panel();
+		lejeri=new Panel();
+		lejeri.setLayout(new GridLayout());
 		Panel p2=new Panel();
 		p.setLayout(new GridLayout(2,1));
 		
@@ -112,8 +123,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		slojevi.setFont(myFont);
 		slojevi.setSize(50, 50);
 		//slojevi.setBackground(Color.LIGHT_GRAY);
-		p1.add(slojevi);
-		p1.setBackground(Color.LIGHT_GRAY);
+		lejeri.add(slojevi); //labela Layers
+		lejeri.setBackground(Color.LIGHT_GRAY);
+		
+		
 		
 		Label selekcije=new Label("Selekcije");
 		selekcije.setFont(myFont);
@@ -131,7 +144,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			p2.add(ptemp);
 		}
 		
-		p.add(p1);
+		p.add(lejeri);
 		p.add(p2);
 		add(p,BorderLayout.WEST);
 		
@@ -154,6 +167,14 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		// TODO Auto-generated method stub
 		String komanda=e.getActionCommand();
 		if(komanda.equals("Dodaj novu sliku")) dijalog.setVisible(true);
+	}
+
+	public void osveziSliku() {
+		// TODO Auto-generated method stub
+		add(gimage,BorderLayout.CENTER);
+		//lejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
+		//lejeri.add(gimage.dodajLejer());
+		revalidate();
 	}
 	
 }

@@ -3,7 +3,7 @@ package Image;
 import java.util.*;
 public class Layer {
 
-private ArrayList<ArrayList<Piksel>> m;
+private ArrayList<ArrayList<Piksel>> m=new ArrayList<ArrayList<Piksel>>();
 	
 private int sirina, visina;
 
