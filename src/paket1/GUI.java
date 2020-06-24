@@ -4,7 +4,7 @@ import java.awt.event.*;
 import java.util.*; 
 import selekcije.*;
 public class GUI extends Frame implements ActionListener,ItemListener{
-
+//BufferedImage imageIO.read
 	ArrayList<SelekcijeGUI> trenSelekcije=new ArrayList();
 	
 	
@@ -21,7 +21,13 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		setSize(700,700);
 		dodajDesniDeo();
 		dodajOperacije();
+		dodajSliku();
 		setVisible(true);
+		
+	}
+
+	private void dodajSliku() {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -36,7 +42,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		p.add(operacije);
 		add(p,BorderLayout.EAST);
 	}
-
+	
 	private void dodajDesniDeo() {
 		ArrayList<Pravougaonik> temp=new ArrayList();
 		temp.add(new Pravougaonik(222,136,180,110));
