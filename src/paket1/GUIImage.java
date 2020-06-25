@@ -85,6 +85,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 	}
 	
+	
+	public void dodajOperaciju(int o) {
+		
+	}
+	
 	public void konstrFinLejer(String fajl) {
 		ArrayList<Integer> aktivniLejeri=new ArrayList();
 		for(Map.Entry<Integer, Checkbox> c:listaAktivne.entrySet()) {
@@ -95,16 +100,39 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		kopirajBufferedUPraveLejere(aktivniLejeri);
 		
 		Layer finalni=slike.konstruisiFinalniLayer(aktivniLejeri);
+		
+		slike.layers.clear();
+		slike.layers.put(1, finalni);
+		
+		saljiUCPP();
+		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
 		
 		File f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+fajl);
+		
 		try {
 			//System.out.println("pisemo"+finalni.getSirina()+", "+finalni.getvisina());
-			System.out.println(ImageIO.write(i,"png",new File(fajl)));
+			System.out.println(ImageIO.write(i,"bmp",new File(fajl)));
+			System.out.println(i.getType());
 			//ImageIO.write
 		} catch (IOException e) {
 			
+			e.printStackTrace();
+		}
+	}
+	private void saljiUCPP() {
+		String cmd=
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Debug\\poopprojekat.exe "+
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP "+
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
+		
+		Runtime runtime=Runtime.getRuntime();
+		try {
+			Process process=runtime.exec(cmd);
+			process.waitFor();
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -130,7 +158,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	private BufferedImage kopirajUBuffered(Layer f) {
 		// TODO Auto-generated method stub
-		BufferedImage fin=new BufferedImage(f.getSirina(),f.getvisina(),BufferedImage.TYPE_INT_ARGB);
+		BufferedImage fin=new BufferedImage(f.getSirina(),f.getvisina(),BufferedImage.TYPE_INT_RGB);
 		
 		for(int i=0;i<f.getSirina();i++) {
 			for(int j=0;j<f.getvisina();j++) {
@@ -358,7 +386,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		
 		origin.trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",te)));
-		origin.selekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
+		origin.panSelekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
 		
 		slike.dodajSelekciju("asd", te, true);
 		
@@ -367,7 +395,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
 		aktivneSel.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
 		aktivneSel.get(aktivneSel.size()-1).addItemListener(this);
-		origin.selekcije.add(ptemp);
+		origin.panSelekcije.add(ptemp);
 		origin.osveziSelekcije();
 		repaint();
 		System.out.println("Broj selekcija: "+origin.trenSelekcije.size());
