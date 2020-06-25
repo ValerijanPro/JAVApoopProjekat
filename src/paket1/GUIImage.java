@@ -122,13 +122,16 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 	}
 	private void saljiUCPP() {
+		String [] as = {"C:\\Users\\\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe",
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP",
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun"};
 		String cmd=
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Debug\\poopprojekat.exe "+
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP "+
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
-		
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
+				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\ASQ.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
 		Runtime runtime=Runtime.getRuntime();
 		try {
+			
 			Process process=runtime.exec(cmd);
 			process.waitFor();
 		} catch (IOException | InterruptedException e) {
