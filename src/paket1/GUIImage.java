@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,28 +20,33 @@ import javax.imageio.ImageIO;
 import Image.Image;
 import Image.Layer;
 import Image.Piksel;
+import selekcije.Pravougaonik;
+import selekcije.Selekcija;
+import java.lang.Math;
 
-//1.na random poziciju upisati
-//
 
 
-public class GUIImage extends Canvas implements ItemListener,ActionListener{
+public class GUIImage extends Canvas implements ItemListener,ActionListener,MouseMotionListener,MouseListener{
 	Map<Integer,BufferedImage> images=new HashMap();
-	Map<Integer,Checkbox> listaBoxova=new HashMap();
-
+	Map<Integer,Checkbox> listaVidljiva=new HashMap();
+	Map<Integer,Checkbox> listaAktivne=new HashMap();
+	
 	Map<Integer,TextField> listaOpacitya=new HashMap();
 
 	GUI origin;
 	int width,height;
 	Image slike=new Image();
 	int brslojeva=0;
+	Point pocetak,kraj;
 	public GUIImage(GUI o) {
 		origin=o;
-		 width=origin.getWidth();
-		//int width=1000;
-		 height=origin.getHeight();
-		//int height=1000;
-		
+		 //width=origin.getWidth();
+		 width=1500;
+		 //height=origin.getHeight();
+		 height=1500;
+		 setBackground(Color.lightGray);
+		 addMouseMotionListener(this);
+		 addMouseListener(this);
 		
 	}
 	public void setPutanja(String s,int t ) {
@@ -84,11 +92,15 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 	public Panel dodajLejer(int t) {
 		Panel p=new Panel();
 		p.add(new Label("Sloj "+t));
+		Checkbox vidljiv=new Checkbox("Vidljiv",true);
 		Checkbox aktivan=new Checkbox("Aktivan",true);
 		aktivan.addItemListener(this);
-		listaBoxova.put(t, aktivan);
+		vidljiv.addItemListener(this);
+		listaVidljiva.put(t, vidljiv);
+		listaAktivne.put(t, aktivan);
 		//aktivan.addItemListener(origin);
 		p.add(aktivan);
+		p.add(vidljiv);
 		TextField poljeZaTekst=new TextField("");
 		poljeZaTekst.addActionListener(this);
 		listaOpacitya.put(t, poljeZaTekst);
@@ -127,7 +139,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 	public void paint(Graphics g) {
 		System.out.println("OSVEZENO CRTANJE POCINJE");
 		//for(BufferedImage i:images)
-			for(Map.Entry<Integer, Checkbox> c:listaBoxova.entrySet()) {
+			for(Map.Entry<Integer, Checkbox> c:listaVidljiva.entrySet()) {
 				BufferedImage i=images.get(c.getKey());
 				
 				if(c.getValue().getState()==false  ) {
@@ -139,6 +151,18 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 					//g.drawImage(i, 0, 0, 800, 600, null);
 					g.drawImage(i, 0,0,  null);
 				}
+			}
+			for(int i=0;i<origin.trenSelekcije.size();i++) {
+				g.setColor(Color.black);
+				 Graphics2D asd = (Graphics2D) g.create();
+				 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
+				 asd.setStroke(d);
+				asd.drawRect(
+						origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
+						origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
+						origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
+						origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
+						);
 			}
 			
 	}
@@ -199,5 +223,75 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener{
 		}
 		//System.out.println(images.size());
 		origin.osveziSliku();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+		//Point end=e.getPoint();
+		//System.out.println("X"+end.getX()+" Y"+end.getY());
+	}
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		
+		//Point start=e.getPoint();
+		//System.out.println("X"+start.getX()+" Y"+start.getY());
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		pocetak=e.getPoint();
+		
+		//System.out.println(e.getPoint());
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		kraj=e.getPoint();
+		Pravougaonik p;
+		if(kraj.x<pocetak.x && kraj.y>pocetak.y) {
+			p=new Pravougaonik(kraj.x,pocetak.y,
+					Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y));
+		}
+		else if(kraj.x<pocetak.x && kraj.y<pocetak.y) {
+			p=new Pravougaonik(kraj.x,kraj.y,
+					Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y));
+		}
+		else if (pocetak.x<kraj.x && kraj.y<pocetak.y) {
+			p=new Pravougaonik(pocetak.x,kraj.y,
+					Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y));
+		}
+		else p=new Pravougaonik(pocetak.x,pocetak.y,
+				Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y));
+		ArrayList<Pravougaonik> te=new ArrayList();
+//		te.add(new Pravougaonik(pocetak.x,pocetak.y,
+//				Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y)));
+		te.add(p);
+		
+		
+		origin.trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",te)));
+		origin.selekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
+		
+		Panel ptemp=new Panel();
+		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());
+		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
+		origin.selekcije.add(ptemp);
+		origin.osveziSelekcije();
+		repaint();
+		System.out.println("Broj selekcija: "+origin.trenSelekcije.size());
+		//System.out.println(e.getPoint());
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
+		
 	}
 }

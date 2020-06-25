@@ -129,12 +129,12 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	private void dodajLeviDeo() {
 		ArrayList<Pravougaonik> temp=new ArrayList();
 		temp.add(new Pravougaonik(222,136,180,110));
-		trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",temp)));
+		//trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",temp)));
 		// TODO Auto-generated method stub
 		Panel p=new Panel();
 		lejeri=new Panel();
 		lejeri.setLayout(new GridLayout());
-		Panel p2=new Panel();
+		selekcije=new Panel();
 		p.setLayout(new GridLayout(2,1));
 		
 		Font myFont = new Font("Times New Roman", Font.BOLD, 24);
@@ -148,24 +148,24 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		
 		
 		
-		Label selekcije=new Label("Selekcije");
-		selekcije.setFont(myFont);
-		selekcije.setSize(50, 50);
+		Label selekcijeL=new Label("Selekcije");
+		selekcijeL.setFont(myFont);
+		selekcijeL.setSize(50, 50);
 		//selekcije.setBackground(Color.LIGHT_GRAY);
-		p2.setLayout(new GridLayout(trenSelekcije.size()+1,1));
-		p2.add(selekcije);
-		p2.setBackground(Color.LIGHT_GRAY);
+		selekcije.setLayout(new GridLayout(trenSelekcije.size()+1,1));
+		selekcije.add(selekcijeL);
+		selekcije.setBackground(Color.LIGHT_GRAY);
 		
 		for(int i=0;i<trenSelekcije.size();i++) {
 			trenSelekcije.get(i).aktivna.addItemListener(this);
 			Panel ptemp=new Panel();
 			ptemp.add(trenSelekcije.get(i).dodajGUIselekciju());
 			ptemp.add(trenSelekcije.get(i).akt());
-			p2.add(ptemp);
+			selekcije.add(ptemp);
 		}
 		
 		p.add(lejeri);
-		p.add(p2);
+		p.add(selekcije);
 		add(p,BorderLayout.WEST);
 		
 	
@@ -189,6 +189,14 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		if(komanda.equals("Dodaj novu sliku")) dijalog.setVisible(true);
 	}
 
+	public void osveziSelekcije() {
+		//remove(selekcije);
+		
+		
+		//add(selekcije);
+		revalidate();
+		
+	}
 	public void osveziSliku() {
 		
 		remove(gimage);
