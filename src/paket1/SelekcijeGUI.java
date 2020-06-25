@@ -8,7 +8,7 @@ public class SelekcijeGUI extends Component{
 	public Checkbox aktivna;
 	public SelekcijeGUI(Selekcija ss) {
 		s=ss;
-		aktivna=new Checkbox("Aktivna");
+		aktivna=new Checkbox("Aktivna",true);
 	}
 	public Label dodajGUIselekciju() {
 		Label labela=new Label("("+s.getNiz().get(0).getX()+","+s.getNiz().get(0).getY()+","

@@ -30,7 +30,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,BufferedImage> images=new HashMap();
 	Map<Integer,Checkbox> listaVidljiva=new HashMap();
 	Map<Integer,Checkbox> listaAktivne=new HashMap();
-	
+	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
 
 	GUI origin;
@@ -153,16 +153,18 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 				}
 			}
 			for(int i=0;i<origin.trenSelekcije.size();i++) {
-				g.setColor(Color.black);
-				 Graphics2D asd = (Graphics2D) g.create();
-				 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
-				 asd.setStroke(d);
-				asd.drawRect(
-						origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
-						origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
-						origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
-						origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
-						);
+				if(aktivneSel.get(i).getState()) {
+					g.setColor(Color.black);
+					 Graphics2D asd = (Graphics2D) g.create();
+					 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
+					 asd.setStroke(d);
+					asd.drawRect(
+							origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
+							origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
+							origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
+							origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
+							);
+				}
 			}
 			
 	}
@@ -210,7 +212,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 		for(Map.Entry<Integer, TextField> c:listaOpacitya.entrySet()) {
 			if(!c.getValue().getText().equals("")) {
@@ -278,6 +280,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		Panel ptemp=new Panel();
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
+		aktivneSel.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
+		aktivneSel.get(aktivneSel.size()-1).addItemListener(this);
 		origin.selekcije.add(ptemp);
 		origin.osveziSelekcije();
 		repaint();
