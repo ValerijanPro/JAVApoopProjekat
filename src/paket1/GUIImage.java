@@ -12,8 +12,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
@@ -32,6 +37,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,Checkbox> listaAktivne=new HashMap();
 	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
+	
 
 	GUI origin;
 	int width,height;
@@ -54,14 +60,17 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		File f=null;
 		//System.out.println(s);
 		f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+s);
-		BufferedImage temp=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-		images.put(t,temp);
-		Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
+		//BufferedImage temp=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+		BufferedImage temp;
+		//images.put(t,temp);
+		
 		//System.out.println("NOVI w:"+novi.getSirina()+", novi h:"+novi.getvisina());
 		try {
 			
 			temp=ImageIO.read(f);
 			zastoNeRadi(temp,t);
+			Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
+			System.out.println("SIR: "+novi.getSirina()+", VIS: "+novi.getvisina());
 			//images.put(t,ImageIO.read(f));
 			//images.set(images.size()-1, ImageIO.read(f));
 			
@@ -79,13 +88,15 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	public void konstrFinLejer(String fajl) {
 		ArrayList<Integer> aktivniLejeri=new ArrayList();
 		for(Map.Entry<Integer, Checkbox> c:listaAktivne.entrySet()) {
-			aktivniLejeri.add(c.getKey());
+			if(c.getValue().getState())
+				aktivniLejeri.add(c.getKey());
 		}
 		//IZMENA ORIDJIDJI
 		kopirajBufferedUPraveLejere(aktivniLejeri);
 		
 		Layer finalni=slike.konstruisiFinalniLayer(aktivniLejeri);
 		BufferedImage i=kopirajUBuffered(finalni);
+		
 		
 		File f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+fajl);
 		try {
@@ -137,8 +148,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		return fin;
 	}
 	private void zastoNeRadi(BufferedImage temp,int t) {
-		BufferedImage temp2=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-		// TODO Auto-generated method stub
+		//BufferedImage temp2=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+		BufferedImage temp2=new BufferedImage(temp.getWidth(),temp.getHeight(),BufferedImage.TYPE_INT_ARGB);
 		for(int i=0;i<temp.getWidth();i++) {
 			for(int j=0;j<temp.getHeight();j++) {
 				char R,G,B,A;
@@ -196,12 +207,19 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		//slike.DodajSloj(novi, brslojeva++);
 		//System.out.println("Trenutno slojeva: "+(brslojeva));
 	}
+	private TreeMap<Integer, Checkbox> sortirajOpadajucePoKljucu() {
+		
+		TreeMap<Integer, Checkbox> t=new TreeMap<Integer,Checkbox>(Collections.reverseOrder());
+		t.putAll(listaVidljiva);
+		return t;
+	}
 	public void paint(Graphics g) {
 		//System.out.println("OSVEZENO CRTANJE POCINJE");
 		//for(BufferedImage i:images)
+			listaVidljiva=sortirajOpadajucePoKljucu();
 			for(Map.Entry<Integer, Checkbox> c:listaVidljiva.entrySet()) {
 				BufferedImage i=images.get(c.getKey());
-				
+				//System.out.println("BR LEJERA: "+c.getKey());
 				if(c.getValue().getState()==false  ) {
 					
 					continue;
@@ -232,6 +250,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			}
 			
 	}
+	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
