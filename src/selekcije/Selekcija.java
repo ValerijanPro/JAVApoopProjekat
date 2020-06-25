@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Selekcija {
 	String ime;
 	public ArrayList<Pravougaonik> niz=new ArrayList();
-	boolean aktivna;
+	public boolean aktivna;
 	
 	public Selekcija(String s, ArrayList<Pravougaonik> p) {
 		ime=s;

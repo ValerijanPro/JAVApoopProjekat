@@ -57,7 +57,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		BufferedImage temp=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		images.put(t,temp);
 		Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
-		System.out.println("NOVI w:"+novi.getSirina()+", novi h:"+novi.getvisina());
+		//System.out.println("NOVI w:"+novi.getSirina()+", novi h:"+novi.getvisina());
 		try {
 			
 			temp=ImageIO.read(f);
@@ -76,6 +76,66 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 	}
 	
+	public void konstrFinLejer(String fajl) {
+		ArrayList<Integer> aktivniLejeri=new ArrayList();
+		for(Map.Entry<Integer, Checkbox> c:listaAktivne.entrySet()) {
+			aktivniLejeri.add(c.getKey());
+		}
+		//IZMENA ORIDJIDJI
+		kopirajBufferedUPraveLejere(aktivniLejeri);
+		
+		Layer finalni=slike.konstruisiFinalniLayer(aktivniLejeri);
+		BufferedImage i=kopirajUBuffered(finalni);
+		
+		File f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+fajl);
+		try {
+			//System.out.println("pisemo"+finalni.getSirina()+", "+finalni.getvisina());
+			System.out.println(ImageIO.write(i,"png",new File(fajl)));
+			//ImageIO.write
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	private void kopirajBufferedUPraveLejere(ArrayList<Integer> aktivniLejeri) {
+		for(int k:aktivniLejeri) {
+			System.out.println("KA: "+k);
+			Layer tren=slike.layers.get(k);
+			BufferedImage tren1=images.get(k);
+			for(int i=0;i<tren1.getWidth();i++) {
+				for(int j=0;j<tren1.getHeight();j++) {
+					char R,G,B,A;
+					 A = (char)((tren1.getRGB(i, j) >> 24) & 0xff);
+				     R = (char)((tren1.getRGB(i, j) >> 16) & 0xff);
+				     G = (char)((tren1.getRGB(i, j) >> 8) & 0xff);
+				     B = (char)((tren1.getRGB(i, j)) & 0xff);
+					
+				     tren.overwritepixel(i, j, new Piksel(R,G,B,0,A));
+					
+				}
+			}
+		}
+		
+	}
+	private BufferedImage kopirajUBuffered(Layer f) {
+		// TODO Auto-generated method stub
+		BufferedImage fin=new BufferedImage(f.getSirina(),f.getvisina(),BufferedImage.TYPE_INT_ARGB);
+		
+		for(int i=0;i<f.getSirina();i++) {
+			for(int j=0;j<f.getvisina();j++) {
+				char R,G,B,A;
+				R=f.getPixel(i, j).getR();
+				G=f.getPixel(i, j).getG();
+				B=f.getPixel(i, j).getB();
+				A=f.getPixel(i, j).getOpacity();
+
+				int novo = (A << 24) | (R << 16) | (G << 8) | B;
+				fin.setRGB(i, j, novo);
+			
+			}
+		}
+		return fin;
+	}
 	private void zastoNeRadi(BufferedImage temp,int t) {
 		BufferedImage temp2=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		// TODO Auto-generated method stub
@@ -137,13 +197,13 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		//System.out.println("Trenutno slojeva: "+(brslojeva));
 	}
 	public void paint(Graphics g) {
-		System.out.println("OSVEZENO CRTANJE POCINJE");
+		//System.out.println("OSVEZENO CRTANJE POCINJE");
 		//for(BufferedImage i:images)
 			for(Map.Entry<Integer, Checkbox> c:listaVidljiva.entrySet()) {
 				BufferedImage i=images.get(c.getKey());
 				
 				if(c.getValue().getState()==false  ) {
-				
+					
 					continue;
 				}
 				else {
@@ -154,6 +214,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			}
 			for(int i=0;i<origin.trenSelekcije.size();i++) {
 				if(aktivneSel.get(i).getState()) {
+					slike.getSelekcije().get(i).aktivna=true;
 					g.setColor(Color.black);
 					 Graphics2D asd = (Graphics2D) g.create();
 					 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
@@ -164,6 +225,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 							origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
 							origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
 							);
+				}
+				else {
+					slike.getSelekcije().get(i).aktivna=false;
 				}
 			}
 			
@@ -276,6 +340,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		origin.trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",te)));
 		origin.selekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
+		
+		slike.dodajSelekciju("asd", te, true);
 		
 		Panel ptemp=new Panel();
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());

@@ -4,15 +4,15 @@ import selekcije.*;
 
 public class Image {
 	//typedef std::vector<Layer> slojevi;
-	Map<Integer,Layer> layers=new HashMap<Integer,Layer>();  
-	int sirina, visina, brlejera;
-	int brbitapopixelu;
-	ArrayList<Selekcija> sel=new ArrayList();
+	public Map<Integer,Layer> layers=new HashMap<Integer,Layer>();  
+	public int sirina, visina, brlejera;
+	public int brbitapopixelu;
+	public ArrayList<Selekcija> sel=new ArrayList();
 	//op operacije;
-	ArrayList<Integer> akt;
-	boolean medijana;
+	public ArrayList<Integer> akt;
+	public boolean medijana;
 	
-	char opacity;
+	public char opacity;
 	
 	public Image(int s , int v , int bbpp  ) {
 		sirina = s;
@@ -32,9 +32,7 @@ public class Image {
 		brbitapopixelu=32;
 		
 	}
-	public void setOpacity() {
-		
-	}
+	
 	public boolean getMedijana() { return medijana; }
 	public void setMedijana(boolean a) { medijana = a; }
 	public void ObrisiLejer(int pozicija) {
