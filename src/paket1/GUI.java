@@ -374,7 +374,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		setMenuBar(traka);
 	}
 
-	private void dodajSliku() {
+	public void dodajSliku() {
 		// TODO Auto-generated method stub
 		gimage.setPutanja(putanja,temp);
 		add(gimage,BorderLayout.CENTER);

@@ -62,6 +62,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Image slike=new Image();
 	int brslojeva=0;
 	Point pocetak,kraj;
+	
+	String izlaznaPutanja;
+	
 	public GUIImage(GUI o) {
 		origin=o;
 		 //width=origin.getWidth();
@@ -84,12 +87,12 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			ekstenzija=ekstenzija.toLowerCase();
 			
 			if(ekstenzija.equals("pam")) {
-				//PAM OBRADA
+				//TODO:PAM OBRADA
 			}
 			else if(ekstenzija.equals("bmp")) {
 				
 				File f=null;
-				f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+s);
+				f=new File("src\\"+s);
 				BufferedImage temp;
 				try {
 					temp=ImageIO.read(f);
@@ -152,10 +155,13 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			outFor.setIndenting(true);
 			outFor.setOmitXMLDeclaration(true);
 			
-			File xmlFile=new File("temp.xml");
+			File xmlFile=new File("src\\temp.xml");
 			FileOutputStream outStream=new FileOutputStream(xmlFile);
 			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
 			serializer.serialize(xmlDOC);
+			outStream.flush();
+			outStream.close();
+			
 			
 		} catch (ParserConfigurationException e) {
 			
@@ -167,7 +173,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 			e.printStackTrace();
 		}
-		
+		int a=0;
 	}
 	
 	public void konstrFinLejer(String fajl) {
@@ -184,25 +190,50 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		slike.layers.clear();
 		slike.layers.put(1, finalni);
 
-		if(listaOperacija.size()!=0) {
-			napraviXMLizlazni();
-			saljiUCPP();
-		}
+
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
 		
-		File f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+fajl);
-		
+		File f=new File("src\\"+fajl);
+		izlaznaPutanja=fajl;
 		try {
 			//System.out.println("pisemo"+finalni.getSirina()+", "+finalni.getvisina());
-			ImageIO.write(i,"bmp",new File(fajl));
+			//ImageIO.write(i,"bmp",new File(fajl));
+			ImageIO.write(i,"bmp",f);
 			//System.out.println(i.getType());
 			//ImageIO.write
 		} catch (IOException e) {
 			
 			e.printStackTrace();
 		}
+		if(listaOperacija.size()!=0) {
+			napraviXMLizlazni();
+			saljiUCPP();
+		}
+		//nek udje u file manaager i nek otvori, necu da prikazujem odmah posle obrade
+		
+		//isprazniSve();
+		//ubaciNovuSliku();
+	}
+	
+	private void isprazniSve() {
+		
+		images.clear();
+		 listaVidljiva.clear();
+		listaAktivne.clear();
+		aktivneSel.clear();
+		listaOpacitya.clear();
+		listaOperacija.clear();
+		origin.trenOperacije.clear();
+		origin.trenSelekcije.clear();
+	}
+	private void ubaciNovuSliku() {
+		
+		origin.putanja=izlaznaPutanja;
+		origin.temp=1;
+		origin.dodajSliku();
+		
 	}
 	private void saljiUCPP() {
 		//napraviXMLizlazni();

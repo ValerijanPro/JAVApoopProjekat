@@ -1,4 +1,4 @@
 <Operacije Medijana="false">
     <Operacija ImeOperacije="class Push" Value="0"/>
-    <Operacija ImeOperacije="class Div" Value="4"/>
+    <Operacija ImeOperacije="class Inverzija" Value="0"/>
 </Operacije>
