@@ -53,7 +53,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,Checkbox> listaAktivne=new HashMap();
 	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
-	Map<String,Integer> listaOperacija=new HashMap();
+	Map<String,Integer> listaOperacija=new LinkedHashMap();
 
 	GUI origin;
 	int width,height;
@@ -120,6 +120,15 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			op.setAttribute("ImeOperacije", "class Push");
 			op.setAttribute("Value", "0");
 			root.appendChild(op);
+			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
+				if(o.getKey()=="Medijana") {
+					root.setAttribute("Medijana", "true");
+					listaOperacija.remove(o.getKey(), o.getValue());
+					System.out.println("OBRISAO MEDIJANU");
+					break;
+					
+				}
+			}
 			
 			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
 				Element oper=xmlDOC.createElement("Operacija");
@@ -131,20 +140,21 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			xmlDOC.appendChild(root);
 			OutputFormat outFor=new OutputFormat();
 			outFor.setIndenting(true);
+			outFor.setOmitXMLDeclaration(true);
 			
-			File xmlFile=new File("nevazno.xml");
+			File xmlFile=new File("temp.xml");
 			FileOutputStream outStream=new FileOutputStream(xmlFile);
 			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
 			serializer.serialize(xmlDOC);
 			
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -165,7 +175,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		slike.layers.put(1, finalni);
 		
 		napraviXMLizlazni();
-		//saljiUCPP();
+		saljiUCPP();
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
@@ -174,8 +184,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		try {
 			//System.out.println("pisemo"+finalni.getSirina()+", "+finalni.getvisina());
-			System.out.println(ImageIO.write(i,"bmp",new File(fajl)));
-			System.out.println(i.getType());
+			ImageIO.write(i,"bmp",new File(fajl));
+			//System.out.println(i.getType());
 			//ImageIO.write
 		} catch (IOException e) {
 			
@@ -183,18 +193,19 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 	}
 	private void saljiUCPP() {
-		napraviXMLizlazni();
+		//napraviXMLizlazni();
 		String [] as = {"C:\\Users\\\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe",
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP",
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun"};
 		String cmd=
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\ASQ.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
+				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
 		Runtime runtime=Runtime.getRuntime();
 		try {
-			
+			System.out.println("Poceo proces");
 			Process process=runtime.exec(cmd);
+			System.out.println("Zavrsen proces");
 			process.waitFor();
 		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -474,6 +485,14 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	@Override
 	public void mouseExited(MouseEvent e) {
 		
+		
+	}
+	public void Redosled() {
+		for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
+			System.out.println(o.getKey());
+			System.out.println(o.getValue());
+			System.out.println();
+		}
 		
 	}
 }

@@ -321,6 +321,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				}
 				cale.dodajOperaciju(); //osvezni panel sa operacijama
+				
 			}
 			
 			
