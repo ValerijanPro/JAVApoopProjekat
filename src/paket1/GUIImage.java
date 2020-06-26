@@ -22,6 +22,7 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+
 import Image.Image;
 import Image.Layer;
 import Image.Piksel;
@@ -29,7 +30,22 @@ import selekcije.Pravougaonik;
 import selekcije.Selekcija;
 import java.lang.Math;
 
+//za XML:
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 public class GUIImage extends Canvas implements ItemListener,ActionListener,MouseMotionListener,MouseListener{
 	Map<Integer,BufferedImage> images=new HashMap();
@@ -37,7 +53,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,Checkbox> listaAktivne=new HashMap();
 	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
-	
+	Map<String,Integer> listaOperacija=new HashMap();
 
 	GUI origin;
 	int width,height;
@@ -86,7 +102,51 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	
 	
-	public void dodajOperaciju(int o) {
+	public void dodajOperaciju(String koja,int operand) {
+		
+		listaOperacija.put(koja, operand);
+		
+	}
+	public void napraviXMLizlazni() {
+		DocumentBuilderFactory docFact=DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder docBuild=docFact.newDocumentBuilder();
+			Document xmlDOC=docBuild.newDocument();
+			
+			//elementi:
+			Element root=xmlDOC.createElement("Operacije");
+			Element op=xmlDOC.createElement("Operacija");
+			op.setAttribute("ImeOperacije", "class Push");
+			op.setAttribute("Value", "0");
+			root.appendChild(op);
+			
+			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
+				Element oper=xmlDOC.createElement("Operacija");
+				oper.setAttribute("ImeOperacije", "class "+o.getKey());
+				oper.setAttribute("Value", o.getValue().toString());
+				root.appendChild(oper);
+			}
+			
+			xmlDOC.appendChild(root);
+			OutputFormat outFor=new OutputFormat();
+			outFor.setIndenting(true);
+			
+			File xmlFile=new File("nevazno.xml");
+			FileOutputStream outStream=new FileOutputStream(xmlFile);
+			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
+			serializer.serialize(xmlDOC);
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -104,7 +164,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		slike.layers.clear();
 		slike.layers.put(1, finalni);
 		
-		saljiUCPP();
+		napraviXMLizlazni();
+		//saljiUCPP();
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
@@ -122,6 +183,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 	}
 	private void saljiUCPP() {
+		napraviXMLizlazni();
 		String [] as = {"C:\\Users\\\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe",
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP",
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun"};

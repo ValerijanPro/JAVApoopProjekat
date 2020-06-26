@@ -116,10 +116,13 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			
 		}
 	}
-	class DijalogZaOperacije extends Dialog implements ItemListener{
+	class DijalogZaOperacije extends Dialog implements ItemListener,ActionListener{
 		Label poljeZaTekst=new Label("Izaberite operaciju koju zelite da primenite: ");
 		Choice izbor=new Choice();
+		TextField operand=new TextField("Operand: ");
+		Button dugme=new Button("Dodaj");
 		GUI cale;
+		String koja;
 		DijalogZaOperacije(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
 			cale=roditelj;
@@ -131,97 +134,196 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 
 		private void dodajKomponente() {
-	
-			setLayout(new GridLayout(2,1));
+			Panel p=new Panel();
+			setLayout(new GridLayout(3,1));
 			add(poljeZaTekst);
 			dodajOper();
-			add(izbor);
+			p.add(izbor);
+			p.add(operand);
+			add(p);
+			add(dugme);
 			izbor.addItemListener(this);
-			
+			operand.addActionListener(this);
+			operand.setEnabled(false);
+			dugme.addActionListener(this);
 		}
 
 		private void dodajOper() {
 			izbor.add("Apsolutna vrednost");
-			izbor.add("add");
-			izbor.add("CrnoBela");
+			izbor.add("Add");
+			izbor.add("Crnobela");
 			izbor.add("Div");
 			izbor.add("DivInvert");
 			izbor.add("Inverzija");
-			izbor.add("log");
-			izbor.add("max");
-			izbor.add("min");
-			izbor.add("mul");
-			izbor.add("pow");
-			izbor.add("siva");
-			izbor.add("sub");
-			izbor.add("subInvert");
+			izbor.add("Log");
+			izbor.add("Max");
+			izbor.add("Min");
+			izbor.add("Mul");
+			izbor.add("Pow");
+			izbor.add("Siva");
+			izbor.add("Sub");
+			izbor.add("SubInvert");
 			izbor.add("Medijana");
 		}
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+		//	System.out.println("ITEM CHANGED");
 			String tekst=izbor.getSelectedItem();
+		//	System.out.println(tekst);
+			koja=tekst;
 			if(tekst=="Apsolutna vrednost") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(1);
+				operand.setEnabled(false);
+				
 			}
-			else if(tekst=="add") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(2);
+			else if(tekst=="Add") {
+				operand.setEnabled(true);
+				
 			} 
-			else if(tekst=="CrnoBela") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(3);
+			else if(tekst=="Crnobela") {
+				operand.setEnabled(false);
+				
 			} 
 			else if(tekst=="Div") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(4);
+				operand.setEnabled(true);
+				
 			} 
 			else if(tekst=="DivInvert") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(5);
+				operand.setEnabled(true);
+				
 			} 
 			else if(tekst=="Inverzija") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(6);
+				operand.setEnabled(false);
+				
 			} 
-			else if(tekst=="log") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(7);
+			else if(tekst=="Log") {
+				operand.setEnabled(true);
+				
 			} 
-			else if(tekst=="max") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(8);
+			else if(tekst=="Max") {
+				operand.setEnabled(false);
+				
 			} 
-			else if(tekst=="min") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(9);
+			else if(tekst=="Min") {
+				operand.setEnabled(false);
+				
 			} 
-			else if(tekst=="mul") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(10);
+			else if(tekst=="Mul") {
+				operand.setEnabled(true);
+				
 			} 
-			else if(tekst=="pow") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(11);
+			else if(tekst=="Pow") {
+				operand.setEnabled(true);
+				
 			} 
-			else if(tekst=="siva") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(12);
+			else if(tekst=="Siva") {
+				operand.setEnabled(false);
+				
 			} 
-			else if(tekst=="sub") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(13);
+			else if(tekst=="Sub") {
+				operand.setEnabled(true);
+				
 			} 
-			else if(tekst=="subInvert") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(14);
+			else if(tekst=="SubInvert") {
+				operand.setEnabled(true);
+				
 			} 
 			else if(tekst=="Medijana") {
-				cale.trenOperacije.add(new GUIoperacije(tekst));
-				cale.gimage.dodajOperaciju(15);
+				operand.setEnabled(false);
+				
 			} 
-			cale.dodajOperaciju(); //osvezni panel sa operacijama
+			//cale.dodajOperaciju();
+			
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			//System.out.println("AKCIJA");
+			String tek=operand.getText();
+			
+			String tekst=izbor.getSelectedItem();
+			koja=tekst;
+			if(e.getActionCommand()=="Dodaj") {
+				if(tekst=="Apsolutna vrednost") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				}
+				else if(tekst=="Add") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="Crnobela") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				} 
+				else if(tekst=="Div") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="DivInvert") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="Inverzija") {
+				
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				} 
+				else if(tekst=="Log") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+				} 
+				else if(tekst=="Max") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				} 
+				else if(tekst=="Min") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				} 
+				else if(tekst=="Mul") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="Pow") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="Siva") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				} 
+				else if(tekst=="Sub") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="SubInvert") {
+					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
+					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
+					
+				} 
+				else if(tekst=="Medijana") {
+					
+					cale.trenOperacije.add(new GUIoperacije(tekst));
+					cale.gimage.dodajOperaciju(tekst,0);
+				}
+				cale.dodajOperaciju(); //osvezni panel sa operacijama
+			}
+			
+			
 			
 		}
 
