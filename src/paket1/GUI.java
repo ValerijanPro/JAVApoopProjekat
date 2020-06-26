@@ -54,7 +54,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			String tekst=poljeZaTekst.getText();
 			//System.out.println("DESILO SE NESTO");
 			if(!tekst.equals("") && !tekst.equals("Uneti ime izlaznog fajla ovde.")) {
-				cale.gimage.konstrFinLejer(tekst);
+				cale.gimage.konstrFinLejer(tekst); //SAVE POZOVI
 				//cale.putanja=tekst;
 				//System.out.println("Putanja nova "+cale.putanja);
 				//cale.dodajSliku();

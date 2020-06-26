@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -73,32 +75,35 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	public void setPutanja(String s,int t ) {
 		
-		File f=null;
-		//System.out.println(s);
-		f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+s);
-		//BufferedImage temp=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-		BufferedImage temp;
-		//images.put(t,temp);
-		
-		//System.out.println("NOVI w:"+novi.getSirina()+", novi h:"+novi.getvisina());
-		try {
+		String regex = ".*\\.(.*)"; //sve iza tacke da uzmem
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(s);
+		if(matcher.matches()) {
+			//System.out.println("BMPBMPBMPMP");
+			String ekstenzija=matcher.group(1);
+			ekstenzija=ekstenzija.toLowerCase();
 			
-			temp=ImageIO.read(f);
-			zastoNeRadi(temp,t);
-			Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
-			System.out.println("SIR: "+novi.getSirina()+", VIS: "+novi.getvisina());
-			//images.put(t,ImageIO.read(f));
-			//images.set(images.size()-1, ImageIO.read(f));
-			
-			kopirajLejer(novi,t);
-			//f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\RAY.bmp");
-		//	images.add(new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB));
-		//	images.set(1, ImageIO.read(f));
-			//ImageIO.write(image,"bmp",f);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(ekstenzija.equals("pam")) {
+				//PAM OBRADA
+			}
+			else if(ekstenzija.equals("bmp")) {
+				
+				File f=null;
+				f=new File("C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\src\\"+s);
+				BufferedImage temp;
+				try {
+					temp=ImageIO.read(f);
+					zastoNeRadi(temp,t);
+					Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
+					kopirajLejer(novi,t);
+					//ImageIO.write(image,"bmp",f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return;
 		}
+		
 	}
 	
 	
@@ -120,14 +125,19 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			op.setAttribute("ImeOperacije", "class Push");
 			op.setAttribute("Value", "0");
 			root.appendChild(op);
+			int kolikoMedijana=0;
 			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
 				if(o.getKey()=="Medijana") {
+					kolikoMedijana++;
 					root.setAttribute("Medijana", "true");
 					listaOperacija.remove(o.getKey(), o.getValue());
-					System.out.println("OBRISAO MEDIJANU");
+					//System.out.println("OBRISAO MEDIJANU");
 					break;
 					
 				}
+			}
+			if(kolikoMedijana==0) {
+				root.setAttribute("Medijana", "false");
 			}
 			
 			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
@@ -173,9 +183,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		slike.layers.clear();
 		slike.layers.put(1, finalni);
-		
-		napraviXMLizlazni();
-		saljiUCPP();
+
+		if(listaOperacija.size()!=0) {
+			napraviXMLizlazni();
+			saljiUCPP();
+		}
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
@@ -198,9 +210,10 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP",
 				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun"};
 		String cmd=
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
-				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun";
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
+				"poopprojekat.exe "+
+				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
+				"src\\AS.BMP src\\temp.xml";
+				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
 		Runtime runtime=Runtime.getRuntime();
 		try {
 			System.out.println("Poceo proces");
@@ -301,9 +314,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 				//G=(char)((poslednji.getRGB(i, j)&(0xFF00))>>8);
 				//B=(char)((poslednji.getRGB(i, j)&(0xFF)));
 					novi.overwritepixel(i, j, new Piksel(R,G,B,0,A));
-				if(i==0 && j==0) {
-					System.out.println("ARGB: "+(int)A+","+(int)R+","+(int)G+","+(int)B);
-				}
+				
 			}
 		}
 		brslojeva++;

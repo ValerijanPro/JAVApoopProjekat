@@ -1,6 +1,4 @@
-<Operacije Medijana="true">
+<Operacije Medijana="false">
     <Operacija ImeOperacije="class Push" Value="0"/>
-    <Operacija ImeOperacije="class Crnobela" Value="0"/>
-    <Operacija ImeOperacije="class Add" Value="1"/>
-    <Operacija ImeOperacije="class Sub" Value="1"/>
+    <Operacija ImeOperacije="class Div" Value="4"/>
 </Operacije>
