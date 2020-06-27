@@ -37,7 +37,13 @@ import java.lang.Math;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -143,17 +149,91 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			DocumentBuilder docBuild=docFact.newDocumentBuilder();
 			Document xmlDOC=docBuild.newDocument();
 			
-			//elementi:
-			Element root=xmlDOC.createElement("Operacije");
+			Element root=xmlDOC.createElement("Image");
+			root.setAttribute("Visina", ((Integer)slike.getvisina()).toString());
+			root.setAttribute("Sirina", ((Integer)slike.getSirina()).toString());
+			
+			//layers
+			Element layers=xmlDOC.createElement("Layers");
+			for(Map.Entry<Integer, Layer> l:slike.getLayers().entrySet()) {
+				Element layer=xmlDOC.createElement("Layer");
+				layer.setAttribute("Sirina", ((Integer)l.getValue().getSirina()).toString());
+				layer.setAttribute("Visina", ((Integer)l.getValue().getvisina()).toString());
+				layer.setAttribute("ID", ((Integer)l.getKey()).toString());
+				for(int i=0;i<l.getValue().getSirina();i++) {
+				//for(int i=0;i<10;i++) {
+					for(int j=0;j<l.getValue().getvisina();j++) {
+					//for(int j=0;j<10;j++) {
+						Piksel p=l.getValue().getPixel(i, j);
+						Element pixel=xmlDOC.createElement("Piksel");
+						int r,g,b,o,of;
+						r=p.getR();
+						g=p.getG();
+						b=p.getB();
+						o=p.getOpacity();
+						of=p.getOffset();
+						pixel.setAttribute("R", ((Integer)r).toString());
+						pixel.setAttribute("G", ((Integer)g).toString());
+						pixel.setAttribute("B", ((Integer)b).toString());
+						pixel.setAttribute("Opacity", ((Integer)o).toString());
+						pixel.setAttribute("Offset", ((Integer)of).toString());
+						pixel.setAttribute("I", ((Integer)j).toString());
+						pixel.setAttribute("J", ((Integer)i).toString());
+						layer.appendChild(pixel);
+						
+					}
+				}
+				layers.appendChild(layer);
+			}
+			root.appendChild(layers);
+			
+			//gotovi layers
+			
+			//nepotrebno ne znam cemu ovo
+			Element aktivne=xmlDOC.createElement("Aktivne");
+			root.appendChild(aktivne);
+			//OK...
+			
+			//SELEKCIJE
+			Element selekcije=xmlDOC.createElement("Selekcije");
+			for(Selekcija s:slike.sel) {
+				Element selekcija=xmlDOC.createElement("Selekcija");
+				selekcija.setAttribute("Ime", s.getIme());
+				
+				if(s.getStanje()) {
+					selekcija.setAttribute("Aktivna", "true");
+				}
+				else {
+					selekcija.setAttribute("Aktivna", "false");
+				}
+				
+				for(Pravougaonik p:s.getNiz()) {
+					Element pravougaonik = xmlDOC.createElement("Pravougaonik");
+					pravougaonik.setAttribute("X", ((Integer)p.getX()).toString());
+					pravougaonik.setAttribute("Y", ((Integer)p.getY()).toString());
+					pravougaonik.setAttribute("sirina", ((Integer)p.getSirina()).toString());
+					pravougaonik.setAttribute("visina", ((Integer)p.getVisina()).toString());
+					selekcija.appendChild(pravougaonik);
+				}
+				
+				selekcije.appendChild(selekcija);
+				
+			}
+			root.appendChild(selekcije);
+			//GOTOVE SELEKCIJE
+			
+			
+			//operacije:
+			Element rootZaOperacije=xmlDOC.createElement("Operacije");
 			Element op=xmlDOC.createElement("Operacija");
 			op.setAttribute("ImeOperacije", "class Push");
 			op.setAttribute("Value", "0");
-			root.appendChild(op);
+			rootZaOperacije.appendChild(op);
 			int kolikoMedijana=0;
 			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
 				if(o.getKey()=="Medijana") {
 					kolikoMedijana++;
-					root.setAttribute("Medijana", "true");
+					rootZaOperacije.setAttribute("Medijana", "true");
 					listaOperacija.remove(o.getKey(), o.getValue());
 					//System.out.println("OBRISAO MEDIJANU");
 					break;
@@ -161,39 +241,57 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 				}
 			}
 			if(kolikoMedijana==0) {
-				root.setAttribute("Medijana", "false");
+				rootZaOperacije.setAttribute("Medijana", "false");
 			}
 			
 			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
 				Element oper=xmlDOC.createElement("Operacija");
 				oper.setAttribute("ImeOperacije", "class "+o.getKey());
 				oper.setAttribute("Value", o.getValue().toString());
-				root.appendChild(oper);
+				rootZaOperacije.appendChild(oper);
 			}
+			root.appendChild(rootZaOperacije);
+			//gotoveOperacije:
 			
 			xmlDOC.appendChild(root);
-			OutputFormat outFor=new OutputFormat();
-			outFor.setIndenting(true);
-			outFor.setOmitXMLDeclaration(true);
+			
+			//xmlDOC.appendChild(rootZaOperacije);
+			
 			
 			File xmlFile=new File("src\\temp.xml");
-			FileOutputStream outStream=new FileOutputStream(xmlFile);
-			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
-			serializer.serialize(xmlDOC);
-			outStream.flush();
-			outStream.close();
+			TransformerFactory transF=TransformerFactory.newDefaultInstance();
+			try {
+				Transformer trans=transF.newTransformer();
+				trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				trans.setOutputProperty(OutputKeys.INDENT, "yes");
+				trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+				DOMSource domSo=new DOMSource(xmlDOC);
+				StreamResult strRes=new StreamResult(xmlFile);
+				
+				trans.transform(domSo,strRes);
+				
+			} catch (TransformerException e) {
+				
+				e.printStackTrace();
+			}
+			
+			
+//			OutputFormat outFor=new OutputFormat();
+//			outFor.setIndenting(true);
+//			outFor.setOmitXMLDeclaration(true);
+//			
+//			
+//			FileOutputStream outStream=new FileOutputStream(xmlFile);
+//			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
+//			serializer.serialize(xmlDOC);
+//			outStream.flush();
+//			outStream.close();
 			
 			
 		} catch (ParserConfigurationException e) {
 			
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			
-			e.printStackTrace();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
+		} 
 		int a=0;
 	}
 	
@@ -211,7 +309,10 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		slike.layers.clear();
 		slike.layers.put(1, finalni);
 
-
+		
+		for(int i=0;i<origin.trenSelekcije.size();i++) {
+			//slike.dodajSelekciju("", origin.trenSelekcije.get(i).s.getNiz(), aktivneSel.get(i).getState());
+		}
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
@@ -228,9 +329,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 			e.printStackTrace();
 		}
-		if(listaOperacija.size()!=0) {
+		if(listaOperacija.size()!=0 || aktivneSel.size()!=0) {
 			napraviXMLizlazni();
-			saljiUCPP();
+			CEOsaljiUCPP();
 		}
 		//nek udje u file manaager i nek otvori, necu da prikazujem odmah posle obrade
 		
@@ -258,9 +359,26 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	private void saljiUCPP() {
 		//napraviXMLizlazni();
-		String [] as = {"C:\\Users\\\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe",
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\AS.BMP",
-				"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\svekrva.fun"};
+		
+		String cmd=
+				"poopprojekat.exe "+
+				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
+				"src\\AS.BMP src\\temp.xml";
+				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
+		Runtime runtime=Runtime.getRuntime();
+		try {
+			System.out.println("Poceo proces");
+			Process process=runtime.exec(cmd);
+			System.out.println("Zavrsen proces");
+			process.waitFor();
+		} catch (IOException | InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	private void CEOsaljiUCPP() {
+		//napraviXMLizlazni();
+		//TODO: NE SME DA OSTANE AS.BMP NEGO PROSLEDI STRING KOJI JE UNEO
 		String cmd=
 				"poopprojekat.exe "+
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
@@ -523,11 +641,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 //				Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y)));
 		te.add(p);
 		
-		
-		origin.trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",te)));
+		Selekcija nova=new Selekcija("asd",te);
+		origin.trenSelekcije.add(new SelekcijeGUI(nova));
 		origin.panSelekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
 		
-		slike.dodajSelekciju("asd", te, true);
+		slike.dodajSelekciju(nova);
 		
 		Panel ptemp=new Panel();
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());

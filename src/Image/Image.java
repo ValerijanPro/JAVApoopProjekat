@@ -78,6 +78,12 @@ public class Image {
 	
 
 	}
+	public void dodajSelekciju(Selekcija s) {
+
+		sel.add(s);
+	
+
+	}
 	public void ObrisiSelekciju(String poz) {
 		//sel.erase(sel.begin()+poz-1);
 		boolean obrisan=false;
