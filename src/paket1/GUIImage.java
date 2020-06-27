@@ -1,5 +1,5 @@
 package paket1;
-
+//TODO: PAM, Sve sto je staticki (naziv slike itd itd), Medijana, Stream negde, Selekcije da rade, Aktivni lejeri, Greske
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,28 +88,49 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 			if(ekstenzija.equals("pam")) {
 				//TODO:PAM OBRADA
-			}
-			else if(ekstenzija.equals("bmp")) {
 				
-				File f=null;
-				f=new File("src\\"+s);
-				BufferedImage temp;
+				String cmd=
+						"poopprojekat.exe "+
+						//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
+						"src\\"+s;
+						//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
+				Runtime runtime=Runtime.getRuntime();
 				try {
-					temp=ImageIO.read(f);
-					zastoNeRadi(temp,t);
-					Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
-					kopirajLejer(novi,t);
-					//ImageIO.write(image,"bmp",f);
-				} catch (IOException e) {
+					System.out.println("Poceo proces");
+					Process process=runtime.exec(cmd);
+					System.out.println("Zavrsen proces");
+					process.waitFor();
+				} catch (IOException | InterruptedException e) {
+					
 					e.printStackTrace();
 				}
+				
+				ucitajBMP("javapam.bmp",t);
+				
+			}
+			else if(ekstenzija.equals("bmp")) {
+				ucitajBMP( s, t);
+				
 			}
 			return;
 		}
 		
 	}
 	
-	
+	private void ucitajBMP(String s, int t) {
+		File f=null;
+		f=new File("src\\"+s);
+		BufferedImage temp;
+		try {
+			temp=ImageIO.read(f);
+			zastoNeRadi(temp,t);
+			Layer novi=new Layer(images.get(t).getWidth(),images.get(t).getHeight());
+			kopirajLejer(novi,t);
+			//ImageIO.write(image,"bmp",f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void dodajOperaciju(String koja,int operand) {
 		
 		listaOperacija.put(koja, operand);
@@ -252,7 +273,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			System.out.println("Zavrsen proces");
 			process.waitFor();
 		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -277,7 +298,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 	}
 	private BufferedImage kopirajUBuffered(Layer f) {
-		// TODO Auto-generated method stub
+		
 		BufferedImage fin=new BufferedImage(f.getSirina(),f.getvisina(),BufferedImage.TYPE_INT_RGB);
 		
 		for(int i=0;i<f.getSirina();i++) {
@@ -329,7 +350,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	
 	private void kopirajLejer(Layer novi,int t) {
-		// TODO Auto-generated method stub
+		
 		
 		BufferedImage poslednji=images.get(t);
 		
@@ -399,7 +420,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
+		
 		origin.osveziSliku();
 //		for(Map.Entry<Integer, Checkbox> c:listaBoxova.entrySet()) {
 //			if(c.getValue().getState()==false) {

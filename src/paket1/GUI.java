@@ -38,7 +38,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 
 		private void dodajKomponente() {
-			// TODO Auto-generated method stub
+			
 			//setLayout(new GridLayout(3,1));
 
 			
@@ -50,7 +50,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			
 			String tekst=poljeZaTekst.getText();
 			//System.out.println("DESILO SE NESTO");
 			if(!tekst.equals("") && !tekst.equals("Uneti ime izlaznog fajla ovde.")) {
@@ -82,7 +82,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 
 		private void dodajKomponente() {
-			// TODO Auto-generated method stub
+			
 			setLayout(new GridLayout(3,1));
 			Label labela=new Label("Ime slike sa ekstenzijom: ");
 			add(labela);
@@ -95,7 +95,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			
 			String tekst=poljeZaTekst.getText();
 			System.out.println("DESILO SE NESTO");
 			if(!tekst.equals("") && !tekst.equals("Uneti tekst ovde.")) {
@@ -357,7 +357,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	}
 
 	private void dodajMenije() {
-		// TODO Auto-generated method stub
+		
 		MenuBar traka=new MenuBar();
 		Menu dodavanje=new Menu("Dodavanje slike");
 		Menu sacuvaj=new Menu("Sacuvaj sliku");
@@ -375,7 +375,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	}
 
 	public void dodajSliku() {
-		// TODO Auto-generated method stub
+		
 		gimage.setPutanja(putanja,temp);
 		add(gimage,BorderLayout.CENTER);
 		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
@@ -387,7 +387,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	}
 
 	private void dodajOperacije() {
-		// TODO Auto-generated method stub
+		
 		panOperacije=new Panel();
 		panOperacije.setBackground(Color.LIGHT_GRAY);
 		Font myFont = new Font("Times New Roman", Font.BOLD, 24);
@@ -409,7 +409,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		ArrayList<Pravougaonik> temp=new ArrayList();
 		temp.add(new Pravougaonik(222,136,180,110));
 		//trenSelekcije.add(new SelekcijeGUI(new Selekcija("asd",temp)));
-		// TODO Auto-generated method stub
+		
 		Panel p=new Panel();
 		panLejeri=new Panel();
 		panLejeri.setLayout(new GridLayout());
@@ -453,7 +453,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
+		
 //		for(int i=0;i<trenSelekcije.size();i++) {
 //			if(trenSelekcije.get(i).aktivna.getState()) {
 //				//System.out.println("postala");
@@ -463,7 +463,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		
 		String komanda=e.getActionCommand();
 		if(komanda.equals("Dodaj novu sliku")) dijalogDodavanje.setVisible(true);
 		else if (komanda.equals("Sacuvaj sliku")) {
