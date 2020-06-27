@@ -536,6 +536,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 	}
 	
+	
+	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		
@@ -610,7 +612,28 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
+		//System.out.println(origin.trenOperacije.stream().allMatch(g->{return (g instanceof GUIoperacije);}));
 		
+		//SVE SA LABA ZIZA:  *U setPutanja imam regex kako se koristi vec
+		//REGEX1: Pattern p=Pattern.compile("^(.*);(.*);(.*);$");
+		//REGEX katastrofalni: Pattern p=Pattern.compile("^\\[\"([^\\[]*).*# ([^\\]]*)\\].*(.)\\];$");
+		 //                           otvorena uglasta,  navodnici,  sve []* sto nije [  , posle tarabe sve sto nije ], karakter pred ]
+		
+		
+		//ISPIS:
+		//listaOperacija.values().stream().forEach(l->{System.out.println(l);});
+		//ILI
+		//listaOperacija.values().stream().forEach(System.out::println);
+		//ako nestaticku:
+		//listaOperacija.values().stream().forEach(this::funkcija);
+		
+		//Obrada u jednoj liniji:  Da je to linija cija su sva stajalista u datoj zoni, a da je najduza od svih (ima najvise stajlista)
+//		Optional<Linija> rezultat=linije.values().stream().
+//			filter(l->l.stajalista().stream().allMatch(s1->s1.zona==zona)).
+//			max((l1,l2)->l1.stajalista().size()-l2.stajalista().size());
+//		if(rezultat.isPresent()) {
+//			System.out.println(rezultat.get())	;
+//		}
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
