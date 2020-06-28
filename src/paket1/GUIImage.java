@@ -333,12 +333,12 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 			e.printStackTrace();
 		}
-		if(listaOperacija.size()!=0 || aktivneSel.size()!=0) {
+		//if(listaOperacija.size()!=0 || aktivneSel.size()!=0) {
 			fajl=parsirajIme(fajl);
 			napraviXMLizlazni(fajl);
 			if(tip==3) return;
 			CEOsaljiUCPP(fajl,tip);
-		}
+		//}
 		//nek udje u file manaager i nek otvori, necu da prikazujem odmah posle obrade
 		
 		isprazniSve();
@@ -351,7 +351,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	private void isprazniSve() {
 		
 		images.clear();
-		 listaVidljiva.clear();
+		listaVidljiva.clear();
 		listaAktivne.clear();
 		aktivneSel.clear();
 		listaOpacitya.clear();
@@ -361,13 +361,13 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		brisanjeLejera.clear();
 		brisanjeSelekcija.clear();
 		
-		for(int i=1;i<origin.panLejeri.getComponentCount();i++) {
+		for(int i=origin.panLejeri.getComponentCount()-1;i>=1;i--) {
 			origin.panLejeri.remove(i);
 		}
-		for(int i=1;i<origin.panSelekcije.getComponentCount();i++) {
+		for(int i=origin.panSelekcije.getComponentCount()-1;i>=1;i--) {
 			origin.panSelekcije.remove(i);
 		}
-		for(int i=1;i<origin.panOperacije.getComponentCount();i++) {
+		for(int i=origin.panOperacije.getComponentCount()-1;i>=1;i--) {
 			origin.panOperacije.remove(i);
 		}
 		origin.redniBrSelekcije.clear();
@@ -429,6 +429,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			
 			e.printStackTrace();
 		}
+		origin.dijalogSacuvaj.setVisible(false);
+		if(origin.dijalogIzlaz.isVisible()) origin.dispose();
 	}
 	private void kopirajBufferedUPraveLejere(ArrayList<Integer> aktivniLejeri) {
 		for(int k:aktivniLejeri) {
@@ -550,19 +552,27 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		//System.out.println("OSVEZENO CRTANJE POCINJE");
 		//for(BufferedImage i:images)
 			listaVidljiva=sortirajOpadajucePoKljucu();
-			for(Map.Entry<Integer, Checkbox> c:listaVidljiva.entrySet()) {
-				BufferedImage i=images.get(c.getKey());
-				//System.out.println("BR LEJERA: "+c.getKey());
-				if(c.getValue().getState()==false  ) {
-					
-					continue;
-				}
-				else {
-					
-					//g.drawImage(i, 0, 0, 800, 600, null);
-					g.drawImage(i, 0,0,  null);
-				}
-			}
+			
+			listaVidljiva.entrySet().stream()   //entrySet -> lista tuplova
+			.filter(l->l.getValue().getState())   //filtriramo sve ciji State nije aktivan (njih izbacujemo)
+			.map(l->images.get(l.getKey())) //za svaki tupli u listi, mapiraj ga (konvertuj) u buff image. nastaje strim buffered image-a
+			.forEach(i->g.drawImage(i, 0,0,  null));   //za svaki buffered image, pozovem draw image
+			
+//			for(Map.Entry<Integer, Checkbox> c:listaVidljiva.entrySet()) {
+//				
+//				
+//				if(c.getValue().getState()==false  ) {
+//					
+//					continue;
+//				}
+//				
+//					BufferedImage i=images.get(c.getKey());
+//					
+//					g.drawImage(i, 0,0,  null);
+//				
+//			}
+			
+			
 			for(int i=0;i<origin.trenSelekcije.size();i++) {
 				if(aktivneSel.get(i).getState()) {
 					slike.getSelekcije().get(i).aktivna=true;

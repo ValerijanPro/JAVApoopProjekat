@@ -12,9 +12,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	ArrayList<GUIoperacije> trenOperacije=new ArrayList();
 	GUIImage gimage;
 	String putanja;
-	private DijalogZaUnos dijalogDodavanje;
-	private DijalogZaIspis dijalogSacuvaj;
-	private DijalogZaOperacije dijalogOperacije;
+	public DijalogZaUnos dijalogDodavanje;
+	public DijalogZaIspis dijalogSacuvaj;
+	public DijalogZaOperacije dijalogOperacije;
+	public DijalogZaIzlaz dijalogIzlaz;
 	//TODO: TEMP JE SAMO DOK NE STAVIM FILECHOOSER, PA CU BROJ GDE UPISUJEM LAYER DRUGACIJE SLATI
 	int temp=0;
 	
@@ -24,6 +25,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	ArrayList<Integer>redniBrSloja=new ArrayList();
 	Panel panSelekcije;
 	Panel panOperacije;
+	
+	
 	
 	class DijalogZaIspis extends Dialog implements ActionListener,ItemListener{
 		Label labela2=new Label("Uneti ime izlaznog fajla BEZ ekstenzije");
@@ -74,6 +77,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			
 			
 			if(e.getActionCommand()=="Sacuvaj") {
+				
 				if(izbor.getSelectedItem().compareTo("BMP")==0) {
 					cale.gimage.konstrFinLejer(tekst,1); 
 				}
@@ -148,7 +152,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		public void actionPerformed(ActionEvent e) {
 			
 			String tekst=poljeZaTekst.getText();
-			System.out.println("DESILO SE NESTO");
+			//System.out.println("DESILO SE NESTO");
 			if(!tekst.equals("") && !tekst.equals("Uneti tekst ovde.")) {
 				
 				cale.putanja=tekst;
@@ -385,13 +389,60 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		
 		
 	}
+	
+	class DijalogZaIzlaz extends Dialog implements ActionListener{
+		
+		Label labela=new Label("Da li zelite da sacuvate sliku pre izlaska?");
+		Button sacuvati=new Button("Sacuvaj pre izlaska");
+		Button exit=new Button("Izlaz");
+		GUI cale;
+		DijalogZaIzlaz(GUI roditelj) {
+			super(roditelj,"Dijalog",false);
+			cale=roditelj;
+			setSize(300,300);
+			addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {setVisible(false);} 
+			});
+			dodajKomponente();
+		}
+
+		private void dodajKomponente() {
+			
+			setLayout(new GridLayout(2,1));
+			Panel p=new Panel();
+			p.add(sacuvati);
+			p.add(exit);
+			add(labela);
+			add(p);
+			sacuvati.addActionListener(this);
+			exit.addActionListener(this);
+			
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if(e.getActionCommand().compareTo("Izlaz")==0) {
+				
+				cale.dispose();
+			}
+			else if(e.getActionCommand().compareTo("Sacuvaj pre izlaska")==0) {
+				cale.dijalogSacuvaj.setVisible(true);
+			}
+			
+			
+		}
+	}
+	
+	
 	public GUI() {
 		
 		super("Slike");
 		addWindowListener(new WindowAdapter(){  
 	          public void windowClosing(WindowEvent e) {  
+	        	  //dijalogSacuvaj.setVisible(true);
+	        	  dijalogIzlaz.setVisible(true);
 	        	 
-	              dispose();  
 	         }   
 	     });
 		//dodajScenu();
@@ -399,6 +450,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		dijalogDodavanje=new DijalogZaUnos(this);
 		dijalogSacuvaj=new DijalogZaIspis(this);
 		dijalogOperacije=new DijalogZaOperacije(this);
+		dijalogIzlaz=new DijalogZaIzlaz(this);
+		
 		setSize(3000,3000);
 		gimage=new GUIImage(this);
 		
