@@ -7,9 +7,10 @@ public class Selekcija {
 	public ArrayList<Pravougaonik> niz=new ArrayList();
 	public boolean aktivna;
 	
+	
 	public Selekcija(String s, ArrayList<Pravougaonik> p) {
 		ime=s;
-	
+		
 		niz.clear();
 		aktivna = false;
 		for(int i=0;i<p.size();i++) {

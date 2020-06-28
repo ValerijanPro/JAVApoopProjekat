@@ -20,7 +20,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	
 	
 	Panel panLejeri;
-	
+	ArrayList<Integer>redniBrSelekcije=new ArrayList();
 	ArrayList<Integer>redniBrSloja=new ArrayList();
 	Panel panSelekcije;
 	Panel panOperacije;
@@ -70,8 +70,12 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 	}
 	class DijalogZaUnos extends Dialog implements ActionListener{
-		TextField poljeZaTekst=new TextField("Uneti tekst ovde.");
-		TextField poljeZaBroj=new TextField("Pozicija na koju upisujemo layer: ");
+		Label label1=new Label("Ime slike sa ekstenzijom: ");
+		Label label2=new Label("Pozicija na koju upisujemo layer: ");
+		TextField poljeZaTekst=new TextField();
+		TextField poljeZaBroj=new TextField();
+		Choice izbor=new Choice();
+		Button dodaj=new Button("Dodaj lejer");
 		GUI cale;
 		DijalogZaUnos(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
@@ -85,11 +89,27 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 		private void dodajKomponente() {
 			
+			Panel p11=new Panel();
+			Panel p12=new Panel();
+			p11.setLayout(new GridLayout(2,1));
+			p12.setLayout(new GridLayout(2,1));
+			Panel p1=new Panel();
+			p1.setLayout(new GridLayout(2,1));
 			setLayout(new GridLayout(3,1));
-			Label labela=new Label("Ime slike sa ekstenzijom: ");
+			Label labela=new Label("Unesite poziciju lejera i ime slike sa ekstenzijom ");
 			add(labela);
-			add(poljeZaBroj);
-			add(poljeZaTekst);
+			p11.add(label2);
+			p11.add(poljeZaBroj);
+			p1.add(p11);
+			
+			p12.add(label1);
+			p12.add(poljeZaTekst);
+			p1.add(p12);
+			
+			
+			add(p1);
+			add(dodaj);
+			dodaj.addActionListener(this);
 			poljeZaBroj.addActionListener(this);
 			poljeZaTekst.addActionListener(this);
 			
@@ -104,7 +124,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 				
 				cale.putanja=tekst;
 				//System.out.println("Putanja nova "+cale.putanja);
-				cale.dodajSliku();
+				
 				//poljeZaTekst.setText("");
 				//System.out.println("test");
 			}
@@ -112,6 +132,9 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			if(!tekst.equals("")) {
 				cale.temp=Integer.parseInt(tekst);
 				//poljeZaBroj.setText("");
+			}
+			if(e.getActionCommand()=="Dodaj lejer") {
+				cale.dodajSliku();
 			}
 			//System.out.println("asd");
 			
@@ -395,11 +418,11 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		revalidate();
 	}
 	public void osveziObrisaneLejere(int x) {
-		System.out.println("x="+x);
+		//System.out.println("x="+x);
 		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
 		for(int i=redniBrSloja.size()-1;i>=0;i--) {
 			if(redniBrSloja.get(i)==x) {
-				System.out.println("i="+i);
+				//System.out.println("i="+i);
 				panLejeri.remove(i+1);
 				redniBrSloja.remove(i);
 				break;

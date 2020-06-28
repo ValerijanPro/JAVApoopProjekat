@@ -98,6 +98,19 @@ public class Image {
 		}
 		//if los index greska
 	}
+	public void ObrisiSelekciju(int poz) {
+	
+		//sel.remove
+		for(int i=0;i<sel.size();i++) {
+			if(sel.get(i).getIme().compareTo(((Integer)poz).toString())==0) {
+				sel.remove(sel.get(i));
+				break;
+			}
+		}
+		//sel.remove(poz);
+		
+		//if los index greska
+	}
 	public ArrayList<Selekcija> getSelekcije() { return sel; }
 	public void DodajSloj(Layer l, int pozicija) {
 

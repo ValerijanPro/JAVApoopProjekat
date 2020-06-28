@@ -63,14 +63,14 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,TextField> listaOpacitya=new HashMap();
 	Map<String,Integer> listaOperacija=new LinkedHashMap();
 	Map<Integer, Button> brisanjeLejera=new HashMap();
-	
+	Map<Integer, Button> brisanjeSelekcija=new HashMap();
 	
 	GUI origin;
 	int width,height;
 	Image slike=new Image();
 	int brslojeva=0;
 	Point pocetak,kraj;
-	
+	public int idSelekcije=0;  //sluzi za identifikaciju selekcija, da bi svaka imala jedinstveno ime
 	String izlaznaPutanja;
 	
 	public GUIImage(GUI o) {
@@ -611,15 +611,48 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		for(Map.Entry<Integer, Button> c:brisanjeLejera.entrySet()) {
 		//	if(c.getValue().getActionCommand()=="Obrisi lejer") {
 			if(c.getValue()==e.getSource()) {
-				System.out.println("OBRISISISISI");
+				//System.out.println("OBRISISISISI");
 				obrisiLejer(c.getKey(),c.getValue());
 				break;
 			}
+		}
+		for(Map.Entry<Integer, Button> c:brisanjeSelekcija.entrySet()) {
+			//	if(c.getValue().getActionCommand()=="Obrisi lejer") {
+				if(c.getValue()==e.getSource()) {
+					//System.out.println("OBRISISISISI");
+					obrisiSelekciju(c.getKey(),c.getValue());
+					break;
+				}
 		}
 		//System.out.println(images.size());
 		origin.osveziSliku();
 	}
 
+	private void obrisiSelekciju(Integer key,Button dugm) {
+		System.out.println("KEY="+key);
+		brisanjeSelekcija.remove(key);
+		System.out.println("SIZE:"+slike.getSelekcije().size());
+		slike.ObrisiSelekciju(key);
+		System.out.println("SIZE:"+slike.getSelekcije().size());
+		
+//		origin.trenSelekcije.remove((int)key);
+		for(int i=0;i<origin.trenSelekcije.size();i++) {
+			if(origin.trenSelekcije.get(i).dugme==dugm) {
+				origin.trenSelekcije.remove(origin.trenSelekcije.get(i));
+				break;
+			}
+		}
+		for(int i=0;i<origin.redniBrSelekcije.size();i++) {
+			if(origin.redniBrSelekcije.get(i)==key){
+				origin.panSelekcije.remove(i+1);
+				origin.redniBrSelekcije.remove(i);
+				aktivneSel.remove((int)i);
+				break;
+			}
+		}
+		//origin.panSelekcije.remove(key+1);
+		
+	}
 	private void obrisiLejer(Integer key, Button value) {
 		
 		brisanjeLejera.remove(key, value);
@@ -678,6 +711,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	public void mouseReleased(MouseEvent e) {
 		kraj=e.getPoint();
 		Pravougaonik p;
+		if(pocetak==null) return;
 		if(kraj.x<pocetak.x && kraj.y>pocetak.y) {
 			p=new Pravougaonik(kraj.x,pocetak.y,
 					Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y));
@@ -697,7 +731,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 //				Math.abs(kraj.x-pocetak.x),Math.abs(kraj.y-pocetak.y)));
 		te.add(p);
 		
-		Selekcija nova=new Selekcija("asd",te);
+		Selekcija nova=new Selekcija(((Integer)idSelekcije).toString(),te);
+		idSelekcije++;
 		origin.trenSelekcije.add(new SelekcijeGUI(nova));
 		origin.panSelekcije.setLayout(new GridLayout(origin.trenSelekcije.size()+1,1));
 		
@@ -706,12 +741,16 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		Panel ptemp=new Panel();
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
+		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dug());
 		aktivneSel.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
 		aktivneSel.get(aktivneSel.size()-1).addItemListener(this);
+		brisanjeSelekcija.put(brisanjeSelekcija.size(), origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dug());
+		brisanjeSelekcija.get(brisanjeSelekcija.size()-1).addActionListener(this);
 		origin.panSelekcije.add(ptemp);
+		origin.redniBrSelekcije.add(idSelekcije-1);
 		origin.osveziSelekcije();
 		repaint();
-		System.out.println("Broj selekcija: "+origin.trenSelekcije.size());
+		//System.out.println("Broj selekcija: "+origin.trenSelekcije.size());
 		//System.out.println(e.getPoint());
 	}
 	@Override
