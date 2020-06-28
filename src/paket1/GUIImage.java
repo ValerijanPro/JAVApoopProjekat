@@ -62,7 +62,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
 	Map<String,Integer> listaOperacija=new LinkedHashMap();
-
+	Map<Integer, Button> brisanjeLejera=new HashMap();
+	
+	
 	GUI origin;
 	int width,height;
 	Image slike=new Image();
@@ -448,6 +450,14 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		images.put(t, temp2);
 	}
 	public Panel dodajLejer(int t) {
+		Panel p2=new Panel();
+		p2.setLayout(new BorderLayout());
+		Button brisanje=new Button("Obrisi lejer");
+		brisanje.addActionListener(this);
+		//p2.add(brisanje,BorderLayout.SOUTH);
+		
+		brisanjeLejera.put(t, brisanje);
+		
 		Panel p=new Panel();
 		p.add(new Label("Sloj "+t));
 		Checkbox vidljiv=new Checkbox("Vidljiv",true);
@@ -456,7 +466,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		vidljiv.addItemListener(this);
 		listaVidljiva.put(t, vidljiv);
 		listaAktivne.put(t, aktivan);
-		//aktivan.addItemListener(origin);
+		
 		p.add(aktivan);
 		p.add(vidljiv);
 		TextField poljeZaTekst=new TextField("");
@@ -464,7 +474,12 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		listaOpacitya.put(t, poljeZaTekst);
 		p.add(poljeZaTekst);
 		p.add(new Label("opacity"));
-		return p;
+		
+		p2.add(p,BorderLayout.CENTER);
+		//p2.add(p);
+		p2.add(brisanje,BorderLayout.SOUTH);
+		brslojeva++;
+		return p2;
 	}
 	
 	private void kopirajLejer(Layer novi,int t) {
@@ -593,10 +608,28 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			//System.out.println("asd");
 			
 		}
+		for(Map.Entry<Integer, Button> c:brisanjeLejera.entrySet()) {
+		//	if(c.getValue().getActionCommand()=="Obrisi lejer") {
+			if(c.getValue()==e.getSource()) {
+				System.out.println("OBRISISISISI");
+				obrisiLejer(c.getKey(),c.getValue());
+				break;
+			}
+		}
 		//System.out.println(images.size());
 		origin.osveziSliku();
 	}
 
+	private void obrisiLejer(Integer key, Button value) {
+		
+		brisanjeLejera.remove(key, value);
+		listaVidljiva.remove(key);
+	
+		listaAktivne.remove(key);
+		listaOpacitya.remove(key);
+		brslojeva--;
+		origin.osveziObrisaneLejere(key);
+	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		

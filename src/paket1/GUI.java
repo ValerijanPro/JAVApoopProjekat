@@ -20,6 +20,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	
 	
 	Panel panLejeri;
+	
+	ArrayList<Integer>redniBrSloja=new ArrayList();
 	Panel panSelekcije;
 	Panel panOperacije;
 	
@@ -101,7 +103,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			if(!tekst.equals("") && !tekst.equals("Uneti tekst ovde.")) {
 				
 				cale.putanja=tekst;
-				System.out.println("Putanja nova "+cale.putanja);
+				//System.out.println("Putanja nova "+cale.putanja);
 				cale.dodajSliku();
 				//poljeZaTekst.setText("");
 				//System.out.println("test");
@@ -373,19 +375,38 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		traka.add(operacije);
 		setMenuBar(traka);
 	}
-
+	
 	public void dodajSliku() {
 		
 		gimage.setPutanja(putanja,temp);
 		add(gimage,BorderLayout.CENTER);
-		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
-		panLejeri.add(gimage.dodajLejer(temp));
-		revalidate();
-		
+		osveziDodateLejere();
+		//for(Integer i:redniBrSloja)System.out.println("i:"+i);
+		//System.out.println();
 		//gimage.paint(getGraphics());
 		
 	}
 
+	public void osveziDodateLejere() {
+		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
+		
+		panLejeri.add(gimage.dodajLejer(temp));
+		redniBrSloja.add(temp);
+		revalidate();
+	}
+	public void osveziObrisaneLejere(int x) {
+		System.out.println("x="+x);
+		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
+		for(int i=redniBrSloja.size()-1;i>=0;i--) {
+			if(redniBrSloja.get(i)==x) {
+				System.out.println("i="+i);
+				panLejeri.remove(i+1);
+				redniBrSloja.remove(i);
+				break;
+			}
+		}
+		//revalidate();
+	}
 	private void dodajOperacije() {
 		
 		panOperacije=new Panel();
