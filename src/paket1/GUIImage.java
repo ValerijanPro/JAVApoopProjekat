@@ -146,7 +146,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	public void napraviXMLizlazni() {
 		DocumentBuilderFactory docFact=DocumentBuilderFactory.newInstance();
-		
+		//fajl="VALERIJAN.XML";
 		try {
 			DocumentBuilder docBuild=docFact.newDocumentBuilder();
 			Document xmlDOC=docBuild.newDocument();
@@ -260,7 +260,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			//xmlDOC.appendChild(rootZaOperacije);
 			
 			
-			File xmlFile=new File("src\\temp.xml");
+			File xmlFile=new File("src\\ temp.xml");
 			TransformerFactory transF=TransformerFactory.newDefaultInstance();
 			try {
 				Transformer trans=transF.newTransformer();
@@ -277,27 +277,17 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 				e.printStackTrace();
 			}
 			
-			
-//			OutputFormat outFor=new OutputFormat();
-//			outFor.setIndenting(true);
-//			outFor.setOmitXMLDeclaration(true);
-//			
-//			
-//			FileOutputStream outStream=new FileOutputStream(xmlFile);
-//			XMLSerializer serializer=new XMLSerializer(outStream,outFor);
-//			serializer.serialize(xmlDOC);
-//			outStream.flush();
-//			outStream.close();
+
 			
 			
 		} catch (ParserConfigurationException e) {
 			
 			e.printStackTrace();
 		} 
-		int a=0;
+		
 	}
 	
-	public void konstrFinLejer(String fajl) {
+	public void konstrFinLejer(String fajl,int tip) {
 		ArrayList<Integer> aktivniLejeri=new ArrayList();
 		for(Map.Entry<Integer, Checkbox> c:listaAktivne.entrySet()) {
 			if(c.getValue().getState())
@@ -312,9 +302,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		slike.layers.put(1, finalni);
 
 		
-		for(int i=0;i<origin.trenSelekcije.size();i++) {
+		//for(int i=0;i<origin.trenSelekcije.size();i++) {
 			//slike.dodajSelekciju("", origin.trenSelekcije.get(i).s.getNiz(), aktivneSel.get(i).getState());
-		}
+		//}
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
@@ -333,6 +323,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 		if(listaOperacija.size()!=0 || aktivneSel.size()!=0) {
 			napraviXMLizlazni();
+			if(tip==3) return;
 			CEOsaljiUCPP();
 		}
 		//nek udje u file manaager i nek otvori, necu da prikazujem odmah posle obrade
@@ -384,7 +375,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		String cmd=
 				"poopprojekat.exe "+
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
-				"src\\AS.BMP src\\temp.xml";
+				"src\\ AS.BMP src\\temp.xml";
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
 		Runtime runtime=Runtime.getRuntime();
 		try {

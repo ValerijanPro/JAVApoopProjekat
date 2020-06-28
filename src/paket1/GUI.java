@@ -25,9 +25,12 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	Panel panSelekcije;
 	Panel panOperacije;
 	
-	class DijalogZaIspis extends Dialog implements ActionListener{
-		TextField poljeZaTekst=new TextField("Uneti ime izlaznog fajla ovde.");
-		
+	class DijalogZaIspis extends Dialog implements ActionListener,ItemListener{
+		Label labela2=new Label("Uneti ime izlaznog fajla ovde.");
+		TextField poljeZaTekst=new TextField();
+		Label labela=new Label("Izlazni format:");
+		Choice izbor=new Choice();
+		Button dugme=new Button("Sacuvaj");
 		GUI cale;
 		DijalogZaIspis(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
@@ -43,9 +46,23 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			
 			//setLayout(new GridLayout(3,1));
 
+			izbor.add("BMP");
+			izbor.add("PAM");
+			izbor.add("XML");
+			Panel p=new Panel();
+			p.add(labela);
+			p.add(izbor);
+			Panel p2=new Panel();
+			p2.setLayout(new GridLayout(2,1));
+			p2.add(labela2);
+			p2.add(poljeZaTekst);
 			
-			add(poljeZaTekst);
-			
+			setLayout(new GridLayout(3,1));
+			add(p);
+			add(p2);
+			add(dugme);
+			izbor.addItemListener(this);
+			dugme.addActionListener(this);
 			poljeZaTekst.addActionListener(this);
 			
 		}
@@ -54,19 +71,31 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		public void actionPerformed(ActionEvent e) {
 			
 			String tekst=poljeZaTekst.getText();
-			//System.out.println("DESILO SE NESTO");
-			if(!tekst.equals("") && !tekst.equals("Uneti ime izlaznog fajla ovde.")) {
-				cale.gimage.konstrFinLejer(tekst); //SAVE POZOVI
-				//cale.putanja=tekst;
-				//System.out.println("Putanja nova "+cale.putanja);
-				//cale.dodajSliku();
-				//poljeZaTekst.setText("");
-				//System.out.println("test");
+			
+			
+			if(e.getActionCommand()=="Sacuvaj") {
+				if(izbor.getSelectedItem().compareTo("BMP")==0) {
+					cale.gimage.konstrFinLejer(tekst,1); 
+				}
+				else if(izbor.getSelectedItem().compareTo("PAM")==0) {
+					cale.gimage.konstrFinLejer(tekst,2); 
+				}
+				else cale.gimage.konstrFinLejer(tekst,3); 
+					
+				
 			}
 			
-			//System.out.println("asd");
+		
+			
+	
 			
 			
+		}
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			// TODO Auto-generated method stub
+			String tekst=izbor.getSelectedItem();
 		}
 	}
 	class DijalogZaUnos extends Dialog implements ActionListener{
