@@ -26,7 +26,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	Panel panOperacije;
 	
 	class DijalogZaIspis extends Dialog implements ActionListener,ItemListener{
-		Label labela2=new Label("Uneti ime izlaznog fajla ovde.");
+		Label labela2=new Label("Uneti ime izlaznog fajla BEZ ekstenzije");
 		TextField poljeZaTekst=new TextField();
 		Label labela=new Label("Izlazni format:");
 		Choice izbor=new Choice();

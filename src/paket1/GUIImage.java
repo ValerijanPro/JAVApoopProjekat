@@ -144,7 +144,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		listaOperacija.put(koja, operand);
 		
 	}
-	public void napraviXMLizlazni() {
+	public void napraviXMLizlazni(String fajl) {
 		DocumentBuilderFactory docFact=DocumentBuilderFactory.newInstance();
 		//fajl="VALERIJAN.XML";
 		try {
@@ -260,7 +260,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			//xmlDOC.appendChild(rootZaOperacije);
 			
 			
-			File xmlFile=new File("src\\ temp.xml");
+			File xmlFile=new File("src\\"+fajl+".xml");
 			TransformerFactory transF=TransformerFactory.newDefaultInstance();
 			try {
 				Transformer trans=transF.newTransformer();
@@ -286,8 +286,17 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		} 
 		
 	}
-	
+	private String parsirajIme(String fajl) {
+		String regex = "(.*)\\..*"; //sve iza tacke da uzmem
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(fajl);
+		if(matcher.matches()) {
+			return matcher.group(1);
+		}
+		return null;
+	}
 	public void konstrFinLejer(String fajl,int tip) {
+		
 		ArrayList<Integer> aktivniLejeri=new ArrayList();
 		for(Map.Entry<Integer, Checkbox> c:listaAktivne.entrySet()) {
 			if(c.getValue().getState())
@@ -308,6 +317,9 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		BufferedImage i=kopirajUBuffered(finalni);
 		
+		if(tip==1) fajl+=".bmp";
+		else if(tip==2) fajl+=".pam";
+		else fajl+=".xml";
 		
 		File f=new File("src\\"+fajl);
 		izlaznaPutanja=fajl;
@@ -322,14 +334,18 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			e.printStackTrace();
 		}
 		if(listaOperacija.size()!=0 || aktivneSel.size()!=0) {
-			napraviXMLizlazni();
+			fajl=parsirajIme(fajl);
+			napraviXMLizlazni(fajl);
 			if(tip==3) return;
-			CEOsaljiUCPP();
+			CEOsaljiUCPP(fajl,tip);
 		}
 		//nek udje u file manaager i nek otvori, necu da prikazujem odmah posle obrade
 		
-		//isprazniSve();
-		//ubaciNovuSliku();
+		isprazniSve();
+		if(tip==1) fajl+=".BMP";
+		else fajl+=".PAM";
+		izlaznaPutanja=fajl;
+		ubaciNovuSliku();
 	}
 	
 	private void isprazniSve() {
@@ -342,12 +358,34 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		listaOperacija.clear();
 		origin.trenOperacije.clear();
 		origin.trenSelekcije.clear();
+		brisanjeLejera.clear();
+		brisanjeSelekcija.clear();
+		
+		for(int i=1;i<origin.panLejeri.getComponentCount();i++) {
+			origin.panLejeri.remove(i);
+		}
+		for(int i=1;i<origin.panSelekcije.getComponentCount();i++) {
+			origin.panSelekcije.remove(i);
+		}
+		for(int i=1;i<origin.panOperacije.getComponentCount();i++) {
+			origin.panOperacije.remove(i);
+		}
+		origin.redniBrSelekcije.clear();
+		origin.redniBrSloja.clear();
+		
+		
+		
+		
+		
+		
+		
 	}
 	private void ubaciNovuSliku() {
 		
 		origin.putanja=izlaznaPutanja;
 		origin.temp=1;
 		origin.dodajSliku();
+		//origin.
 		
 	}
 	private void saljiUCPP() {
@@ -369,13 +407,17 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			e.printStackTrace();
 		}
 	}
-	private void CEOsaljiUCPP() {
+	private void CEOsaljiUCPP(String fajl,int tip) {
 		//napraviXMLizlazni();
 		//TODO: NE SME DA OSTANE AS.BMP NEGO PROSLEDI STRING KOJI JE UNEO
+		String ekst;
+		if(tip==1) ekst=".BMP";
+		else ekst=".PAM";
 		String cmd=
 				"poopprojekat.exe "+
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\x64\\Release\\poopprojekat.exe "+
-				"src\\ AS.BMP src\\temp.xml";
+				"src\\"+fajl+ekst+" src\\"+fajl+".xml";
+	
 				//"C:\\Users\\Valja\\source\\repos\\poopprojekat\\poopprojekatGITHUB\\poopprojekat\\AS.BMP C:\\Users\\Valja\\source\\repos\\poopprojekat\\JAVApoopProjekat\\temp.xml";
 		Runtime runtime=Runtime.getRuntime();
 		try {
