@@ -1,7 +1,10 @@
 package paket1;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*; 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import selekcije.*;
 import java.io.*;
 import javax.imageio.ImageIO;
@@ -16,6 +19,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	public DijalogZaIspis dijalogSacuvaj;
 	public DijalogZaOperacije dijalogOperacije;
 	public DijalogZaIzlaz dijalogIzlaz;
+	public DijalogZaRIPGreske dijalogZaRIPGreske;
+	public DijalogZaOpomene dijalogZaOpomene;
 	//TODO: TEMP JE SAMO DOK NE STAVIM FILECHOOSER, PA CU BROJ GDE UPISUJEM LAYER DRUGACIJE SLATI
 	int temp=0;
 	
@@ -79,7 +84,11 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			
 			
 			if(e.getActionCommand()=="Sacuvaj") {
-				
+				if(!tekst.matches("^[a-zA-Z]\\w*$")|| tekst.matches("^.*\\..*$")) {
+					cale.dijalogZaOpomene.labela.setText("Nevalidno ime fajla, promenite ga");
+					cale.dijalogZaOpomene.setVisible(true);
+					return;
+				}
 				if(izbor.getSelectedItem().compareTo("BMP")==0) {
 					cale.gimage.konstrFinLejer(tekst,1); 
 				}
@@ -100,7 +109,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			// TODO Auto-generated method stub
+			
 			String tekst=izbor.getSelectedItem();
 		}
 	}
@@ -156,21 +165,60 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 			String tekst=poljeZaTekst.getText();
 			//System.out.println("DESILO SE NESTO");
 			if(!tekst.equals("") && !tekst.equals("Uneti tekst ovde.")) {
-				
+				Pattern pattern = Pattern.compile("^[a-zA-Z]\\w*\\.(.+)$");
+				Matcher matcher = pattern.matcher(tekst);
+				if(!matcher.matches()) {
+					cale.dijalogZaOpomene.labela.setText("Nevalidno ime fajla, unesite ispravno ime");
+					cale.dijalogZaOpomene.setVisible(true);
+					return;
+				}
+				if(matcher.group(1).toLowerCase().compareTo("bmp")!=0 && matcher.group(1).toLowerCase().compareTo("pam")!=0 && matcher.group(1).toLowerCase().compareTo("xml")!=0)
+				{
+					cale.dijalogZaOpomene.labela.setText("Nevalidan format ulaznog fajla. Dozvoljeni: BMP,PAM ili XML");
+					cale.dijalogZaOpomene.setVisible(true);
+					return;
+				}
 				cale.putanja=tekst;
-				//System.out.println("Putanja nova "+cale.putanja);
-				
-				//poljeZaTekst.setText("");
-				//System.out.println("test");
 			}
 			tekst=poljeZaBroj.getText();
 			if(!tekst.equals("")) {
-				cale.temp=Integer.parseInt(tekst);
+				
+				if(!tekst.matches("^\\d+$")) {
+					cale.dijalogZaOpomene.labela.setText("Nevalidan broj lejera, unesite ispravan broj lejera");
+					cale.dijalogZaOpomene.setVisible(true);
+					return;
+				}
+				int provera;
+				provera=Integer.parseInt(tekst);
+				if(provera<0) {
+					cale.dijalogZaOpomene.labela.setText("Nevalidan broj lejera, unesite ispravan broj lejera");
+					cale.dijalogZaOpomene.setVisible(true);
+					return;
+				}
+				cale.temp=provera;
 				//poljeZaBroj.setText("");
+				if(e.getActionCommand()=="Dodaj lejer") {
+					if(poljeZaTekst.getText().compareTo("")==0 ) {
+						cale.dijalogZaOpomene.labela.setText("Unesite ime slike");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
+					if(tekst.compareTo("")==0 ) {
+						cale.dijalogZaOpomene.labela.setText("Unesite broj lejera");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
+					for(int i=0;i<cale.redniBrSloja.size();i++) {
+						if(cale.redniBrSloja.get(i)==provera) {
+							cale.dijalogZaOpomene.labela.setText("Vec postoji lejer na zadatoj poziciji");
+							cale.dijalogZaOpomene.setVisible(true);
+							return;
+						}
+					}
+					cale.dodajSliku();
+				}
 			}
-			if(e.getActionCommand()=="Dodaj lejer") {
-				cale.dodajSliku();
-			}
+			
 			//System.out.println("asd");
 			
 			
@@ -311,6 +359,11 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				}
 				else if(tekst=="Add") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
@@ -321,11 +374,26 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				} 
 				else if(tekst=="Div") {
+					if(Integer.parseInt(tek)==0) {
+						cale.dijalogZaOpomene.labela.setText("Nije dovozljeno deljenje nulom!");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
 				} 
 				else if(tekst=="DivInvert") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
@@ -336,7 +404,11 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				} 
 				else if(tekst=="Log") {
-					
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 				} 
@@ -351,11 +423,21 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				} 
 				else if(tekst=="Mul") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
 				} 
 				else if(tekst=="Pow") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
@@ -366,11 +448,21 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				} 
 				else if(tekst=="Sub") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
 				} 
 				else if(tekst=="SubInvert") {
+					if(!tek.matches("^\\d+$")) {
+						cale.dijalogZaOpomene.labela.setText("Nevalidan operand");
+						cale.dijalogZaOpomene.setVisible(true);
+						return;
+					}
 					cale.trenOperacije.add(new GUIoperacije(tekst,tek));
 					cale.gimage.dodajOperaciju(tekst,Integer.parseInt(tek));
 					
@@ -437,6 +529,90 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 	}
 	
+	class DijalogZaRIPGreske extends Dialog implements ActionListener{
+		
+		public Label labela=new Label("Desila se neocekivana greska");
+		
+		Button exit=new Button("Izlaz");
+		GUI cale;
+		DijalogZaRIPGreske(GUI roditelj) {
+			super(roditelj,"Dijalog",false);
+			cale=roditelj;
+			setSize(300,300);
+			addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {setVisible(false);} 
+			});
+			dodajKomponente();
+		}
+
+		private void dodajKomponente() {
+			
+			setLayout(new GridLayout(2,1));
+			Panel p=new Panel();
+			
+			p.add(exit);
+			add(labela);
+			add(p);
+			
+			exit.addActionListener(this);
+			
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if(e.getActionCommand().compareTo("Izlaz")==0) {
+				
+				cale.dispose();
+			}
+			
+			
+			
+		}
+	}
+	
+	class DijalogZaOpomene extends Dialog implements ActionListener{
+		
+		public Label labela=new Label("Desila se neocekivana greska");
+		
+		Button exit=new Button("OK");
+		GUI cale;
+		DijalogZaOpomene(GUI roditelj) {
+			super(roditelj,"Dijalog",false);
+			cale=roditelj;
+			setSize(300,300);
+			addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {setVisible(false);} 
+			});
+			dodajKomponente();
+		}
+
+		private void dodajKomponente() {
+			
+			setLayout(new GridLayout(2,1));
+			Panel p=new Panel();
+			
+			p.add(exit);
+			add(labela);
+			add(p);
+			
+			exit.addActionListener(this);
+			
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if(e.getActionCommand().compareTo("OK")==0) {
+				
+				setVisible(false);
+			}
+			
+			
+			
+		}
+	}
+	
 	
 	public GUI() {
 		
@@ -454,6 +630,8 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		dijalogSacuvaj=new DijalogZaIspis(this);
 		dijalogOperacije=new DijalogZaOperacije(this);
 		dijalogIzlaz=new DijalogZaIzlaz(this);
+		dijalogZaRIPGreske=new DijalogZaRIPGreske(this);
+		dijalogZaOpomene=new DijalogZaOpomene(this);
 		
 		setSize(3000,3000);
 		gimage=new GUIImage(this);
@@ -466,6 +644,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		
 	}
 
+	
 	private void dodajMenije() {
 		
 		MenuBar traka=new MenuBar();
@@ -487,14 +666,15 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	public void dodajSliku() {
 		
 		gimage.setPutanja(putanja,temp);
-		add(gimage,BorderLayout.CENTER);
-		osveziDodateLejere();
+		if(gimage.postojiSlika) {add(gimage,BorderLayout.CENTER);
+			osveziDodateLejere();}
 		//for(Integer i:redniBrSloja)System.out.println("i:"+i);
 		//System.out.println();
 		//gimage.paint(getGraphics());
 		
 	}
 
+	
 	public void osveziDodateLejere() {
 		panLejeri.setLayout(new GridLayout(gimage.brslojeva+1,1));
 		

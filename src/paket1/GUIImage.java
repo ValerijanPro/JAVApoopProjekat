@@ -73,7 +73,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Point pocetak,kraj;
 	public int idSelekcije=0;  //sluzi za identifikaciju selekcija, da bi svaka imala jedinstveno ime
 	String izlaznaPutanja;
-	
+	boolean postojiSlika=true;
 	public GUIImage(GUI o) {
 		origin=o;
 		 //width=origin.getWidth();
@@ -129,6 +129,13 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	private void ucitajBMP(String s, int t) {
 		File f=null;
 		f=new File("src\\"+s);
+		if(!f.exists()) {
+			postojiSlika=false;
+			origin.dijalogZaOpomene.labela.setText("Data slika ne postoji");
+			origin.dijalogZaOpomene.setVisible(true);
+			return;
+		}
+		postojiSlika=true;
 		BufferedImage temp;
 		try {
 			temp=ImageIO.read(f);
