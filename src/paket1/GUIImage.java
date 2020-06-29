@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import com.sun.tools.javac.util.Pair;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 public class GUIImage extends Canvas implements ItemListener,ActionListener,MouseMotionListener,MouseListener{
@@ -61,7 +62,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer,Checkbox> listaAktivne=new HashMap();
 	ArrayList<Checkbox> aktivneSel=new ArrayList();
 	Map<Integer,TextField> listaOpacitya=new HashMap();
-	Map<String,Integer> listaOperacija=new LinkedHashMap();
+	ArrayList<Pair<String,Integer>> listaOperacija=new ArrayList();
 	Map<Integer, Button> brisanjeLejera=new HashMap();
 	Map<Integer, Button> brisanjeSelekcija=new HashMap();
 	Map<Integer,Button> brisanjeOperacija=new HashMap();
@@ -154,12 +155,12 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	public void dodajOperaciju(String koja,int operand) {
 		
-		listaOperacija.put(koja, operand);
+		listaOperacija.add(new Pair(koja,operand));
 		brisanjeOperacija.put(brisanjeOperacija.size(), origin.trenOperacije.get(origin.trenOperacije.size()-1).brisanje);
 	}
 	public void napraviXMLizlazni(String fajl) {
 		DocumentBuilderFactory docFact=DocumentBuilderFactory.newInstance();
-		//fajl="VALERIJAN.XML";
+		
 		try {
 			DocumentBuilder docBuild=docFact.newDocumentBuilder();
 			Document xmlDOC=docBuild.newDocument();
@@ -241,28 +242,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			//operacije:
 			Element rootZaOperacije=xmlDOC.createElement("Operacije");
 			Element op=xmlDOC.createElement("Operacija");
-			op.setAttribute("ImeOperacije", "class Push");
-			op.setAttribute("Value", "0");
-			rootZaOperacije.appendChild(op);
-			int kolikoMedijana=0;
-			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
-				if(o.getKey()=="Medijana") {
-					kolikoMedijana++;
-					rootZaOperacije.setAttribute("Medijana", "true");
-					listaOperacija.remove(o.getKey(), o.getValue());
-					//System.out.println("OBRISAO MEDIJANU");
-					break;
-					
-				}
-			}
-			if(kolikoMedijana==0) {
-				rootZaOperacije.setAttribute("Medijana", "false");
-			}
-			
-			for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
+
+			for(Pair<String,Integer> p:listaOperacija) {
 				Element oper=xmlDOC.createElement("Operacija");
-				oper.setAttribute("ImeOperacije", "class "+o.getKey());
-				oper.setAttribute("Value", o.getValue().toString());
+				oper.setAttribute("ImeOperacije", "class "+p.fst);
+				oper.setAttribute("Value", p.snd.toString());
 				rootZaOperacije.appendChild(oper);
 			}
 			root.appendChild(rootZaOperacije);
@@ -373,7 +357,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		origin.trenSelekcije.clear();
 		brisanjeLejera.clear();
 		brisanjeSelekcija.clear();
-		
+		bojenjeSelekcija.clear();
+		bojeSelekcija.clear();
 		for(int i=origin.panLejeri.getComponentCount()-1;i>=1;i--) {
 			origin.panLejeri.remove(i);
 		}
@@ -881,11 +866,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 	}
 	public void Redosled() {
-		for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
-			System.out.println(o.getKey());
-			System.out.println(o.getValue());
-			System.out.println();
-		}
+//		for(Map.Entry<String, Integer> o:listaOperacija.entrySet()) {
+//			System.out.println(o.getKey());
+//			System.out.println(o.getValue());
+//			System.out.println();
+//		}
 		
 	}
 	
