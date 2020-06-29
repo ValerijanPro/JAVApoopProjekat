@@ -7,9 +7,11 @@ public class SelekcijeGUI extends Component{
 	public Selekcija s;
 	public Checkbox aktivna;
 	public Button dugme;
+	public Button oboji;
 	public SelekcijeGUI(Selekcija ss) {
 		s=ss;
 		dugme=new Button("Obrisi selekciju");
+		oboji=new Button("Oboji selekciju");
 		aktivna=new Checkbox("Aktivna",true);
 	}
 	public Label dodajGUIselekciju() {
@@ -20,6 +22,7 @@ public class SelekcijeGUI extends Component{
 	}
 	public Checkbox akt() {return aktivna;}
 	public Button dug() {return dugme;}
+	public Button oboj() {return oboji;}
 	//public String toString() {
 		
 	//}

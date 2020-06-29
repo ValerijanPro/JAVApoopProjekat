@@ -21,6 +21,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	public DijalogZaIzlaz dijalogIzlaz;
 	public DijalogZaRIPGreske dijalogZaRIPGreske;
 	public DijalogZaOpomene dijalogZaOpomene;
+	public DijalogZaBojenje dijalogZaBojenje;
 	//TODO: TEMP JE SAMO DOK NE STAVIM FILECHOOSER, PA CU BROJ GDE UPISUJEM LAYER DRUGACIJE SLATI
 	int temp=0;
 	
@@ -580,7 +581,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		DijalogZaOpomene(GUI roditelj) {
 			super(roditelj,"Dijalog",false);
 			cale=roditelj;
-			setSize(300,300);
+			setSize(400,400);
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent we) {setVisible(false);} 
 			});
@@ -613,7 +614,64 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		}
 	}
 	
-	
+	class DijalogZaBojenje extends Dialog implements ActionListener{
+		
+		public Label labela=new Label("RGB komponente za bojenje selekcije:");
+		public TextField R=new TextField("R:");
+		public TextField G=new TextField("G:");
+		public TextField B=new TextField("B:");
+		Button exit=new Button("OK");
+		GUI cale;
+		DijalogZaBojenje(GUI roditelj) {
+			super(roditelj,"Dijalog",false);
+			cale=roditelj;
+			setSize(400,400);
+			addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {setVisible(false);} 
+			});
+			dodajKomponente();
+		}
+
+		private void dodajKomponente() {
+			
+			setLayout(new GridLayout(3,1));
+			Panel p=new Panel();
+			p.add(R);
+			p.add(G);
+			p.add(B);
+			Panel pexit=new Panel();
+			
+			pexit.add(exit);
+			add(labela);
+			add(p);
+			add(pexit);
+			
+			exit.addActionListener(this);
+			R.addActionListener(this);
+			G.addActionListener(this);
+			B.addActionListener(this);
+			
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String t1=R.getText();
+			String t2=G.getText();
+			String t3=B.getText();
+			
+			
+			if(e.getActionCommand().compareTo("OK")==0) {
+				
+				//cale.gimage.novaBoja=Color(Float.parseFloat(t1),Float.parseFloat(t2),Float.parseFloat(t3));
+				cale.gimage.novaBoja=new Color(Integer.parseInt(t1),Integer.parseInt(t2),Integer.parseInt(t3));
+				setVisible(false);
+				cale.gimage.stvarnoObojiSelekciju();
+			}
+			
+			
+			
+		}
+	}
 	public GUI() {
 		
 		super("Slike");
@@ -632,7 +690,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 		dijalogIzlaz=new DijalogZaIzlaz(this);
 		dijalogZaRIPGreske=new DijalogZaRIPGreske(this);
 		dijalogZaOpomene=new DijalogZaOpomene(this);
-		
+		dijalogZaBojenje=new DijalogZaBojenje(this);
 		setSize(3000,3000);
 		gimage=new GUIImage(this);
 		

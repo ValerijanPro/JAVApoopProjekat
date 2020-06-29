@@ -65,6 +65,11 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<Integer, Button> brisanjeLejera=new HashMap();
 	Map<Integer, Button> brisanjeSelekcija=new HashMap();
 	Map<Integer,Button> brisanjeOperacija=new HashMap();
+	Map<Integer,Button> bojenjeSelekcija=new HashMap();
+	Map<Integer,Color> bojeSelekcija=new HashMap();
+	
+	public Color novaBoja;
+	public int kojaSelNovaBoja;
 	
 	GUI origin;
 	int width,height;
@@ -584,16 +589,29 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 			for(int i=0;i<origin.trenSelekcije.size();i++) {
 				if(aktivneSel.get(i).getState()) {
 					slike.getSelekcije().get(i).aktivna=true;
-					g.setColor(Color.black);
-					 Graphics2D asd = (Graphics2D) g.create();
-					 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
-					 asd.setStroke(d);
-					asd.drawRect(
-							origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
-							origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
-							origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
-							origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
-							);
+					if(bojeSelekcija.containsKey(i)) {
+						g.setColor(bojeSelekcija.get(i));
+						g.fillRect(
+								origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
+								);
+						
+					}
+					else {
+						g.setColor(Color.black);
+						 Graphics2D asd = (Graphics2D) g.create();
+						 Stroke d = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10}, 0);
+						 asd.setStroke(d);
+						asd.drawRect(
+								origin.trenSelekcije.get(i).s.niz.get(0).getX(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getY(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getSirina(), 
+								origin.trenSelekcije.get(i).s.niz.get(0).getVisina()
+								);
+					}
+					
 				}
 				else {
 					slike.getSelekcije().get(i).aktivna=false;
@@ -684,11 +702,28 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 					break;
 				}
 		}
+		for(Map.Entry<Integer, Button> c:bojenjeSelekcija.entrySet()) {
+			//	if(c.getValue().getActionCommand()=="Obrisi lejer") {
+				if(c.getValue()==e.getSource()) {
+					//System.out.println("OBRISISISISI");
+					obojSelekciju(c.getKey(),c.getValue());
+					break;
+				}
+		}
 		
 		//System.out.println(images.size());
 		origin.osveziSliku();
 	}
 
+	private void obojSelekciju(Integer key, Button value) {
+		origin.dijalogZaBojenje.setVisible(true);
+		kojaSelNovaBoja=key;
+	}
+	public void stvarnoObojiSelekciju() {
+		
+		bojeSelekcija.put(kojaSelNovaBoja, novaBoja);
+		repaint();
+	}
 	private void obrisiOperaciju(Integer key, Button value) {
 		
 		brisanjeOperacija.remove(key);
@@ -698,6 +733,8 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	}
 	private void obrisiSelekciju(Integer key,Button dugm) {
 		//System.out.println("KEY="+key);
+		bojeSelekcija.remove(key);
+		bojenjeSelekcija.remove(key);
 		brisanjeSelekcija.remove(key);
 		//System.out.println("SIZE:"+slike.getSelekcije().size());
 		slike.ObrisiSelekciju(key);
@@ -806,16 +843,28 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		
 		slike.dodajSelekciju(nova);
 		
+		Panel ceo=new Panel();
+		ceo.setLayout(new BorderLayout());
+		Panel zaBoju=new Panel();
+		
 		Panel ptemp=new Panel();
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dodajGUIselekciju());
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
 		ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dug());
+		//ptemp.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).oboj());
+		zaBoju.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).oboj());
+		ceo.add(ptemp,BorderLayout.CENTER);
+		ceo.add(zaBoju,BorderLayout.SOUTH);
+		
 		aktivneSel.add(origin.trenSelekcije.get(origin.trenSelekcije.size()-1).akt());
 		aktivneSel.get(aktivneSel.size()-1).addItemListener(this);
 		brisanjeSelekcija.put(brisanjeSelekcija.size(), origin.trenSelekcije.get(origin.trenSelekcije.size()-1).dug());
 		brisanjeSelekcija.get(brisanjeSelekcija.size()-1).addActionListener(this);
-		origin.panSelekcije.add(ptemp);
+		origin.panSelekcije.add(ceo);
 		origin.redniBrSelekcije.add(idSelekcije-1);
+		bojenjeSelekcija.put(bojenjeSelekcija.size(),origin.trenSelekcije.get(origin.trenSelekcije.size()-1).oboj());
+		bojenjeSelekcija.get(bojenjeSelekcija.size()-1).addActionListener(this);
+		
 		origin.osveziSelekcije();
 		repaint();
 		//System.out.println("Broj selekcija: "+origin.trenSelekcije.size());
@@ -839,4 +888,5 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 		}
 		
 	}
+	
 }
