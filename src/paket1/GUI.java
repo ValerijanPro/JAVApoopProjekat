@@ -23,8 +23,10 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	Panel panLejeri;
 	ArrayList<Integer>redniBrSelekcije=new ArrayList();
 	ArrayList<Integer>redniBrSloja=new ArrayList();
+	ArrayList<Integer> redniBrOperacije=new ArrayList();
 	Panel panSelekcije;
 	Panel panOperacije;
+	
 	
 	
 	
@@ -379,6 +381,7 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 					cale.gimage.dodajOperaciju(tekst,0);
 				}
 				cale.dodajOperaciju(); //osvezni panel sa operacijama
+				cale.redniBrOperacije.add(redniBrOperacije.size()); //za brisanje sluzi
 				
 			}
 			
@@ -526,10 +529,22 @@ public class GUI extends Frame implements ActionListener,ItemListener{
 	public void dodajOperaciju() {
 		panOperacije.setLayout(new GridLayout(trenOperacije.size()+2,1));
 		panOperacije.add(trenOperacije.get(trenOperacije.size()-1).dodajGUIoperaciju());
+		trenOperacije.get(trenOperacije.size()-1).brisanje.addActionListener(gimage);
 		//remove(panOperacije);
 		//add(panOperacije,BorderLayout.EAST);
 		revalidate();
 		//panOperacije.add(comp)
+	}
+	public void obrisiOperaciju(int koja) {
+		for(int i=0;i<redniBrOperacije.size();i++) {
+			if(redniBrOperacije.get(i)==koja) {
+				redniBrOperacije.remove(i);
+				panOperacije.remove(i+1);
+				trenOperacije.remove(i);
+			}
+		}
+		
+		revalidate();
 	}
 	private void dodajLeviDeo() {
 		ArrayList<Pravougaonik> temp=new ArrayList();

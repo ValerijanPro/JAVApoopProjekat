@@ -1,5 +1,7 @@
 package paket1;
 
+import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
@@ -13,6 +15,7 @@ public class GUIoperacije extends Component {
 	Random random=new Random();
 	String naziv;
 	String Operand="";
+	Button brisanje=new Button("Obrisi");
 	public GUIoperacije(String s) {
 		naziv=s;
 		
@@ -34,12 +37,20 @@ public class GUIoperacije extends Component {
 		p.setBackground(boja);
 		Label labela=new Label(naziv);
 		labela.setFont(new Font("Ariel", Font.BOLD, 18));
-		p.add(labela);
+		//p.add(labela);
 		if(Operand!="") {
 			Label labelica=new Label();
+			labelica.setFont(new Font("Ariel", Font.BOLD, 18));
 			labelica.setText(Operand);
-			p.setLayout(new GridLayout(2,1));
-			p.add(labelica);
+			p.setLayout(new BorderLayout());
+			p.add(labela,BorderLayout.CENTER);
+			p.add(labelica,BorderLayout.EAST);
+			p.add(brisanje,BorderLayout.SOUTH);
+		}
+		else {
+			p.setLayout(new BorderLayout());
+			p.add(labela,BorderLayout.CENTER);
+			p.add(brisanje,BorderLayout.SOUTH);
 		}
 		return p;
 	}

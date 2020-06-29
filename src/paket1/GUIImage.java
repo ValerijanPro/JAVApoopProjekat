@@ -64,6 +64,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	Map<String,Integer> listaOperacija=new LinkedHashMap();
 	Map<Integer, Button> brisanjeLejera=new HashMap();
 	Map<Integer, Button> brisanjeSelekcija=new HashMap();
+	Map<Integer,Button> brisanjeOperacija=new HashMap();
 	
 	GUI origin;
 	int width,height;
@@ -142,7 +143,7 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 	public void dodajOperaciju(String koja,int operand) {
 		
 		listaOperacija.put(koja, operand);
-		
+		brisanjeOperacija.put(brisanjeOperacija.size(), origin.trenOperacije.get(origin.trenOperacije.size()-1).brisanje);
 	}
 	public void napraviXMLizlazni(String fajl) {
 		DocumentBuilderFactory docFact=DocumentBuilderFactory.newInstance();
@@ -667,16 +668,33 @@ public class GUIImage extends Canvas implements ItemListener,ActionListener,Mous
 					break;
 				}
 		}
+		
+		for(Map.Entry<Integer, Button> c:brisanjeOperacija.entrySet()) {
+			//	if(c.getValue().getActionCommand()=="Obrisi lejer") {
+				if(c.getValue()==e.getSource()) {
+					//System.out.println("OBRISISISISI");
+					obrisiOperaciju(c.getKey(),c.getValue());
+					break;
+				}
+		}
+		
 		//System.out.println(images.size());
 		origin.osveziSliku();
 	}
 
+	private void obrisiOperaciju(Integer key, Button value) {
+		
+		brisanjeOperacija.remove(key);
+		
+		origin.obrisiOperaciju(key);
+		
+	}
 	private void obrisiSelekciju(Integer key,Button dugm) {
-		System.out.println("KEY="+key);
+		//System.out.println("KEY="+key);
 		brisanjeSelekcija.remove(key);
-		System.out.println("SIZE:"+slike.getSelekcije().size());
+		//System.out.println("SIZE:"+slike.getSelekcije().size());
 		slike.ObrisiSelekciju(key);
-		System.out.println("SIZE:"+slike.getSelekcije().size());
+		//System.out.println("SIZE:"+slike.getSelekcije().size());
 		
 //		origin.trenSelekcije.remove((int)key);
 		for(int i=0;i<origin.trenSelekcije.size();i++) {
